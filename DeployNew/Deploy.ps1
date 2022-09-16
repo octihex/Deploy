@@ -8,6 +8,36 @@ if (!$(net session *>$null; $LASTEXITCODE -eq 0))
     exit
 }
 
+function GotoWhere {
+  if (!((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "test2")) {
+    Write-Host -Object "pas ok"
+  }
+  if ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "RenameOK") {
+      Write-Host -Object "ok"
+  }
+
+}
+test1
+
+
+
+
+
+
+
+
+
+
+
+
+
+$newNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
+New-Item -Path c:\Deploy\Check-Install.txt -Force
+Out-File -FilePath c:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK
+Rename-Computer -NewName $newNamePc -Force -Restart
+
+
+
 #Installe le module Powershell PSWindowsUpdate puis le suprime.
 #Recherche et installe toutes les MAJ Dell disponible.
 Write-Host -ForegroundColor Yellow -Object "Configuration des MAJ Windows"
