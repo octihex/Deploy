@@ -7,7 +7,7 @@ if (!$(net session *>$null; $LASTEXITCODE -eq 0))
     Write-Host -ForegroundColor Yellow -Object "Ce script a besoin d'etre ouvert avec permissions d'administrateurs."
     exit
 }
-
+<#
 #Renomme le poste sans avoir besoin de le redemarre.
 Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
 $newNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
@@ -22,7 +22,7 @@ Set-ItemProperty -path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlo
 
 Add-Computer -DomainName ceva.net -ComputerName $env:computername -NewName $newNamePc
 Clear-Host
-
+#>
 #Installe le module Powershell PSWindowsUpdate puis le suprime.
 #Recherche et installe toutes les MAJ Dell disponible.
 Write-Host -ForegroundColor Yellow -Object "Configuration des MAJ Windows"
@@ -46,7 +46,7 @@ Clear-Host
 
 #Installation UEM
 Write-Host -ForegroundColor Yellow -Object "Installation d'UEM"
-Start-Process -FilePath "C:\Deploy\UEM\LANDesk.exe"
+Start-Process -FilePath "C:\Deploy\LANDesk\LANDesk.exe"
 Clear-Host
 
 #Installation Windows Defender.
