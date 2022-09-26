@@ -189,9 +189,6 @@ else
 
 #-------------------------------------------------------------------------------------------
 
-New-Item -Path C:\Deploy\Check-Install.txt -Force | Out-Null
-Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-
 #Ajout du MDP sur CEPRT
 net user CEPRT *
 
