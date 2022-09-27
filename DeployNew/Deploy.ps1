@@ -146,9 +146,25 @@ function Install_Apps
   Restart-Computer
 }
 
-function Clean 
+function Cleaning_Install 
 {
-  
+  net user CEPRT *
+  Remove-Item "C:\Users\schadour\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Deploy.lnk" | Out-Null
+  Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 5
+  $Cleaning_Command = "%systemroot%\System32\WindowsPowerShell\v1.0\powershell.exe Set-ExecutionPolicy -executionpolicy Restricted"
+  $Cleaning_REG_PATH = "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+  if (-not ((Get-Item -Path $Cleaning_REG_PATH).Run ))
+  {
+    New-ItemProperty -Path $Cleaning_REG_PATH -Name Run -Value $Cleaning_Command -PropertyType ExpandString
+  }
+  else
+  {
+    Set-ItemProperty -Path $Cleaning_REG_PATH -Name Run -Value $Cleaning_Command -PropertyType ExpandString
+  }
+  #Suprime les fichiers d'installation et redemarre le poste.
+  shutdown -r -t 5
+  Set-Location C:\
+  C:\Deploy\Clean.lnk
 }
 
 #---------------------------------------------------------------------------------------------------------------------------------
@@ -160,10 +176,9 @@ if (!(Get-Content -Path C:\Deploy\Check-Install.txt -ErrorAction SilentlyContinu
 }
 
 #Suivi d'étape de l'installation.
-### ---Faire a l'envers--- ###
 if ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "AppsOK")
 {
-  Clean
+  Cleaning_Install
 }
 elseif ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "MAJDellOK")
 {
@@ -189,13 +204,5 @@ else
 
 #-------------------------------------------------------------------------------------------
 
-#Ajout du MDP sur CEPRT
-net user CEPRT *
 
 
-
-
-#Suprime les fichiers d'installation et redemarre le poste.
-shutdown -r -t 5
-Set-Location C:\
-C:\Deploy\Clean.lnk

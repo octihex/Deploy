@@ -12,4 +12,5 @@ If(!(test-path -PathType container $DeployPath))
 
 Write-Host -ForegroundColor Yellow -Object "Transfert des fichiers sur le poste"
 Copy-Item -Path ".\Deploy\*" -Destination $DeployPath -Recurse
+Copy-Item -Path "C:\Deploy\Deploy.lnk" -Destination "C:\Users\schadour\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
 Start-Process powershell -verb runas -ArgumentList "$DeployPath\Deploy.ps1"
