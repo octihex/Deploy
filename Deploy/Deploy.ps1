@@ -138,7 +138,7 @@ function Install_Apps
 
   #Installation Adobe.
   Write-Host -ForegroundColor Yellow -Object "Installation d'Adobe"
-  Start-Process -FilePath "C:\Deploy\Apps\Adobe.exe /sAll /rs /msi EULA_ACCEPT=YES" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Deploy\Apps\Adobe.exe" -ArgumentList "/sAll /rs /msi EULA_ACCEPT=YES" -NoNewWindow -Wait
 
   #Installation Chrome.
   Write-Host -ForegroundColor Yellow -Object "Installation de Chrome"

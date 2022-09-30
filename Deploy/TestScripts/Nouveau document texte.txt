@@ -1,0 +1,171 @@
+PS C:\Users\schadour> $testvar = Get-Content -Path c:\Deploy\GetFolder.txt
+PS C:\Users\schadour> $testvar
+D:\Deploy\
+PS C:\Users\schadour> cd $testvar
+cd : Lecteur introuvable. Il n'existe aucun lecteur nommé « D ».
+Au caractère Ligne:1 : 1
++ cd $testvar
++ ~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (D:String) [Set-Location], DriveNotFoundException
+    + FullyQualifiedErrorId : DriveNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS C:\Users\schadour> Set-Location $testvar
+Set-Location : Un objet n'existe pas à l'emplacement spécifié D:\Deploy\ .
+Au caractère Ligne:1 : 1
++ Set-Location $testvar
++ ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument : (:) [Set-Location], PSArgumentException
+    + FullyQualifiedErrorId : Argument,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS C:\Users\schadour> cd $testvar
+cd : Un objet n'existe pas à l'emplacement spécifié D:\Deploy\ .
+Au caractère Ligne:1 : 1
++ cd $testvar
++ ~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument : (:) [Set-Location], PSArgumentException
+    + FullyQualifiedErrorId : Argument,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS C:\Users\schadour> d:
+PS D:\> Set-Location $testvar
+Set-Location : Un objet n'existe pas à l'emplacement spécifié D:\Deploy\ .
+Au caractère Ligne:1 : 1
++ Set-Location $testvar
++ ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument : (:) [Set-Location], PSArgumentException
+    + FullyQualifiedErrorId : Argument,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS D:\> $testvar = Get-Content -Path c:\Deploy\GetFolder.txt
+PS D:\> $testvar
+D:\Deploy\
+PS D:\> write-host "lala $testvar lala"
+lala D:\Deploy\  lala
+PS D:\> $testvar = Get-Content -Path c:\Deploy\GetFolder.txt
+PS D:\> $testvar
+D:\Deploy
+PS D:\> Set-Location $testvar
+Set-Location : Un objet n'existe pas à l'emplacement spécifié D:\Deploy .
+Au caractère Ligne:1 : 1
++ Set-Location $testvar
++ ~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument : (:) [Set-Location], PSArgumentException
+    + FullyQualifiedErrorId : Argument,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS D:\> $testvar = Get-Content -Path c:\Deploy\GetFolder.txt
+PS D:\> $testvar
+D:\Deploy
+PS D:\> cd $testvar
+PS D:\Deploy> cd :
+cd : Impossible de trouver le chemin d'accès « D:\Deploy\: », car il n'existe pas.
+Au caractère Ligne:1 : 1
++ cd :
++ ~~~~
+    + CategoryInfo          : ObjectNotFound: (D:\Deploy\::String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS D:\Deploy> c:
+PS C:\Users\schadour> cd \\fs11lib1fr
+cd : Impossible de trouver le chemin d'accès « \\fs11lib1fr », car il n'existe pas.
+Au caractère Ligne:1 : 1
++ cd \\fs11lib1fr
++ ~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (\\fs11lib1fr:String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS C:\Users\schadour> cd X:\
+PS X:\> dir
+
+
+    Répertoire : X:\
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        19/06/2020     08:32                Audit
+d-----        21/09/2021     16:14                DEPLOIEMENT
+d-----        29/04/2022     12:11                Ivanti2021-1
+d-----        11/03/2020     07:57                Logs
+d-----        11/05/2022     11:42                MAJ WINDOWS
+d-----        16/08/2022     16:02                O2ID
+d-----        21/07/2021     14:37                Outils
+d-----        27/02/2019     10:11                Scripts
+d-----        26/02/2021     16:19                _DRIVERS
+d-----        22/01/2021     14:13                _MACINTOSH
+d-----        19/06/2020     09:28                _MACOS
+d-----        17/08/2022     12:41                _WINDOWS
+-a----        12/04/2019     22:29            179 172.21.19.30_LIBID18025_Couloir.vnc
+-a----        12/04/2019     22:29            206 172.21.19.31_LIBID18026_Local_R0501_Haut.vnc
+-a----        12/04/2019     22:29            127 172.21.19.32_LIBID18276_Local_R0501_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.33_LIBID18027_Local_R0502_Haut.vnc
+-a----        12/04/2019     22:29            187 172.21.19.34_LIBID18277_Local_R0502_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.35_LIBID18028_Local_R0503_Haut.vnc
+-a----        12/04/2019     22:29            161 172.21.19.36_LIBID18278_Local_R0503_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.37_LIBID18029_Local_R0504_Haut.vnc
+-a----        12/04/2019     22:29            127 172.21.19.38_LIBID18279_Local_R0504_Bas.vnc
+-a----        12/04/2019     22:29            186 172.21.19.39_LIBID18030_Local_Stockage.vnc
+-a----        12/04/2019     22:29            169 172.21.19.40_LIBID18031_Local_Remplissage Verre.vnc
+-a----        12/04/2019     22:29            173 172.21.19.41_LIBID18032_Local_Remplissage_Plastique.vnc
+-a----        12/04/2019     22:29            157 172.21.19.42_LIBID18280_Station_NEP.vnc
+-a---l        29/03/2021     09:00       28797948 205205.ZIP
+-a---l        30/03/2021     14:12      446901843 6.5.1d-hotfix7-2021Mar12-39a4a112.tgz
+-a---l        13/01/2021     17:13     6390022144 cohesity-6.5.1d_release-20201226_1fee0cd5-centos.iso
+-a----        26/01/2021     14:18            786 licences 2021 Scorepop.txt
+-a----        21/01/2022     15:24           1040 licences POP2022.txt
+-a----        07/11/2018     10:59            171 Nouveau document texte.txt
+
+
+PS X:\> $net = new-object -ComObject WScript.Network
+PS X:\> $net.MapNetworkDrive("Z:", "\\localhost\C$\Users\Keith\Documents\Project")
+PS X:\> $net = new-object -ComObject WScript.Network
+PS X:\> $net.MapNetworkDrive("X:", "\\fs11lib1fr\Logiciels")
+PS X:\> (new-object -ComObject WScript.Network).MapNetworkDrive("Z:", "\\fs11lib1fr\Logiciels")
+PS X:\> z:
+PS Z:\> dir
+
+
+    Répertoire : Z:\
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        19/06/2020     08:32                Audit
+d-----        21/09/2021     16:14                DEPLOIEMENT
+d-----        29/04/2022     12:11                Ivanti2021-1
+d-----        11/03/2020     07:57                Logs
+d-----        11/05/2022     11:42                MAJ WINDOWS
+d-----        16/08/2022     16:02                O2ID
+d-----        21/07/2021     14:37                Outils
+d-----        27/02/2019     10:11                Scripts
+d-----        26/02/2021     16:19                _DRIVERS
+d-----        22/01/2021     14:13                _MACINTOSH
+d-----        19/06/2020     09:28                _MACOS
+d-----        17/08/2022     12:41                _WINDOWS
+-a----        12/04/2019     22:29            179 172.21.19.30_LIBID18025_Couloir.vnc
+-a----        12/04/2019     22:29            206 172.21.19.31_LIBID18026_Local_R0501_Haut.vnc
+-a----        12/04/2019     22:29            127 172.21.19.32_LIBID18276_Local_R0501_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.33_LIBID18027_Local_R0502_Haut.vnc
+-a----        12/04/2019     22:29            187 172.21.19.34_LIBID18277_Local_R0502_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.35_LIBID18028_Local_R0503_Haut.vnc
+-a----        12/04/2019     22:29            161 172.21.19.36_LIBID18278_Local_R0503_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.37_LIBID18029_Local_R0504_Haut.vnc
+-a----        12/04/2019     22:29            127 172.21.19.38_LIBID18279_Local_R0504_Bas.vnc
+-a----        12/04/2019     22:29            186 172.21.19.39_LIBID18030_Local_Stockage.vnc
+-a----        12/04/2019     22:29            169 172.21.19.40_LIBID18031_Local_Remplissage Verre.vnc
+-a----        12/04/2019     22:29            173 172.21.19.41_LIBID18032_Local_Remplissage_Plastique.vnc
+-a----        12/04/2019     22:29            157 172.21.19.42_LIBID18280_Station_NEP.vnc
+-a---l        29/03/2021     09:00       28797948 205205.ZIP
+-a---l        30/03/2021     14:12      446901843 6.5.1d-hotfix7-2021Mar12-39a4a112.tgz
+-a---l        13/01/2021     17:13     6390022144 cohesity-6.5.1d_release-20201226_1fee0cd5-centos.iso
+-a----        26/01/2021     14:18            786 licences 2021 Scorepop.txt
+-a----        21/01/2022     15:24           1040 licences POP2022.txt
+-a----        07/11/2018     10:59            171 Nouveau document texte.txt
+
+
+PS Z:\> x:
+PS X:\> z:
+PS Z:\> x:
+Set-Location : Impossible de trouver le chemin d'accès « X:\ », car il n'existe pas.
+Au caractère Ligne:1 : 1
++ Set-Location $MyInvocation.MyCommand.Name
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (X:\:String) [Set-Location], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand

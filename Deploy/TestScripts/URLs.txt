@@ -1,0 +1,6 @@
+https://stackoverflow.com/questions/1530733/powershell-how-to-map-a-network-drive-with-a-different-username-password
+https://stackoverflow.com/questions/55036600/cannot-see-mapped-drive-in-file-explorer
+https://stackoverflow.com/questions/42435699/mapped-network-drives-are-not-showing-in-my-computer
+https://shellgeek.com/powershell-map-network-drive/
+https://stackoverflow.com/questions/11120104/how-to-run-a-powershell-script-in-runonce-key
+https://download.lenovo.com/cdrt/docs/DG-SystemUpdateSuite.pdf

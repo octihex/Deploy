@@ -1,0 +1,99 @@
+PS C:\WINDOWS\system32> New-PSDrive -Name "Public" -PSProvider "FileSystem" -Root "\\Server01\Public"
+PS C:\WINDOWS\system32> New-PSDrive -Name "Public" -PSProvider "FileSystem" -Root "\\Server01\Public"
+New-PSDrive : Un lecteur nommé « Public » existe déjà.
+Au caractère Ligne:1 : 1
++ New-PSDrive -Name "Public" -PSProvider "FileSystem" -Root "\\Server01 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceExists: (Public:String) [New-PSDrive], SessionStateException
+    + FullyQualifiedErrorId : DriveAlreadyExists,Microsoft.PowerShell.Commands.NewPSDriveCommand
+
+PS C:\WINDOWS\system32> New-PSDrive -Name "F" -PSProvider "FileSystem" -Root "\\fs11lib1fr\Logiciels" -Persist
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+F                2756,52       2363,36 FileSystem    \\fs11lib1fr\Logiciels
+
+
+PS C:\WINDOWS\system32> New-PSDrive -Name "F" -PSProvider "FileSystem" -Root "\\fs11lib1fr\Logiciels" -Persist -Scope Global
+New-PSDrive : Nom de périphérique local déjà utilisé
+Au caractère Ligne:1 : 1
++ New-PSDrive -Name "F" -PSProvider "FileSystem" -Root "\\fs11lib1fr\Lo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation : (F:PSDriveInfo) [New-PSDrive], Win32Exception
+    + FullyQualifiedErrorId : CouldNotMapNetworkDrive,Microsoft.PowerShell.Commands.NewPSDriveCommand
+
+PS C:\WINDOWS\system32> New-PSDrive -Name "X" -PSProvider "FileSystem" -Root "\\fs11lib1fr\Logiciels" -Persist -Scope Global
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+X                2756,52       2363,36 FileSystem    \\fs11lib1fr\Logiciels
+
+
+PS C:\WINDOWS\system32> Set-Execution policy restricted
+Set-Execution : Le terme «Set-Execution» n'est pas reconnu comme nom d'applet de commande, fonction, fichier de script
+ou programme exécutable. Vérifiez l'orthographe du nom, ou si un chemin d'accès existe, vérifiez que le chemin d'accès
+est correct et réessayez.
+Au caractère Ligne:1 : 1
++ Set-Execution policy restricted
++ ~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (Set-Execution:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+PS C:\WINDOWS\system32> Set-Executionpolicy restricted
+
+Modification de la stratégie d'exécution
+La stratégie d’exécution permet de vous prémunir contre les scripts que vous jugez non fiables. En modifiant la
+stratégie d’exécution, vous vous exposez aux risques de sécurité décrits dans la rubrique d’aide
+about_Execution_Policies à l’adresse https://go.microsoft.com/fwlink/?LinkID=135170. Voulez-vous modifier la stratégie
+d’exécution ?
+[O] Oui  [T] Oui pour tout  [N] Non  [U] Non pour tout  [S] Suspendre  [?] Aide (la valeur par défaut est « N ») : t
+Set-Executionpolicy : Windows PowerShell a correctement mis à jour votre stratégie d’exécution, mais ce paramétrage
+est remplacé par une stratégie définie dans un contexte plus spécifique. Votre environnement va donc conserver sa
+stratégie d’exécution actuelle, Unrestricted. Tapez «Get-ExecutionPolicy -List» pour afficher les paramètres de
+stratégie d’exécution. Pour plus d’informations, voir «Get-Help Set-ExecutionPolicy».
+Au caractère Ligne:1 : 1
++ Set-Executionpolicy restricted
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (:) [Set-ExecutionPolicy], SecurityException
+    + FullyQualifiedErrorId : ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand
+PS C:\WINDOWS\system32> Set-Executionpolicy restricted -Scope LocalMachine
+
+Modification de la stratégie d'exécution
+La stratégie d’exécution permet de vous prémunir contre les scripts que vous jugez non fiables. En modifiant la
+stratégie d’exécution, vous vous exposez aux risques de sécurité décrits dans la rubrique d’aide
+about_Execution_Policies à l’adresse https://go.microsoft.com/fwlink/?LinkID=135170. Voulez-vous modifier la stratégie
+d’exécution ?
+[O] Oui  [T] Oui pour tout  [N] Non  [U] Non pour tout  [S] Suspendre  [?] Aide (la valeur par défaut est « N ») : t
+Set-Executionpolicy : Windows PowerShell a correctement mis à jour votre stratégie d’exécution, mais ce paramétrage
+est remplacé par une stratégie définie dans un contexte plus spécifique. Votre environnement va donc conserver sa
+stratégie d’exécution actuelle, Unrestricted. Tapez «Get-ExecutionPolicy -List» pour afficher les paramètres de
+stratégie d’exécution. Pour plus d’informations, voir «Get-Help Set-ExecutionPolicy».
+Au caractère Ligne:1 : 1
++ Set-Executionpolicy restricted -Scope LocalMachine
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (:) [Set-ExecutionPolicy], SecurityException
+    + FullyQualifiedErrorId : ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand
+PS C:\WINDOWS\system32> Get-PSDrive X | Remove-PSDrive
+PS C:\WINDOWS\system32> New-PSDrive -Name "X" -PSProvider "FileSystem" -Root "\\fs11lib1fr\Logiciels" -Persist -Scope Global
+
+Name           Used (GB)     Free (GB) Provider      Root                                                                                                 CurrentLocation
+----           ---------     --------- --------      ----                                                                                                 ---------------
+X                2756,52       2363,35 FileSystem    \\fs11lib1fr\Logiciels
+
+
+PS C:\WINDOWS\system32> New-PSDrive -Name "X" -PSProvider FileSystem -Root "\\fs11lib1fr\Logiciels" -Scope Global -Persist
+New-PSDrive : Nom de périphérique local déjà utilisé
+Au caractère Ligne:1 : 1
++ New-PSDrive -Name "X" -PSProvider FileSystem -Root "\\fs11lib1fr\Logi ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation : (X:PSDriveInfo) [New-PSDrive], Win32Exception
+    + FullyQualifiedErrorId : CouldNotMapNetworkDrive,Microsoft.PowerShell.Commands.NewPSDriveCommand
+
+PS C:\WINDOWS\system32> New-PSDrive -Name "P" -PSProvider FileSystem -Root "\\fs11lib1fr\Logiciels" -Scope Global -Persist
+
+Name           Used (GB)     Free (GB) Provider      Root                                                                                                 CurrentLocation
+----           ---------     --------- --------      ----                                                                                                 ---------------
+P                2756,52       2363,35 FileSystem    \\fs11lib1fr\Logiciels
+
+
+PS C:\WINDOWS\system32>
