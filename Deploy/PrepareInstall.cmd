@@ -1,4 +1,7 @@
 @echo off
-Powershell Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
-Powershell Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 0
-Powershell .\PreparationPoste.ps1
+
+IF EXIST C:\Deploy rmdir /S /Q C:\Deploy
+IF NOT EXIST C:\Deploy mkdir C:\Deploy
+PowerShell (Get-Location).Path > C:\Deploy\GetFolder.txt
+
+PowerShell -ExecutionPolicy UnRestricted -File .\PreparationPoste.ps1
