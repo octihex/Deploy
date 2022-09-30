@@ -115,13 +115,13 @@ function Install_Apps
 
   #Installation Citrix.
   Write-Host -ForegroundColor Yellow -Object "Installation de Citrix"
-  Start-Process -FilePath "C:\Deploy\Apps\Citrix.exe /noreboot /silent /AutoUpdateCheck=Disabled EnableCEIP=false EnableTracing=false" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Deploy\Apps\Citrix.exe" -ArgumentList "/noreboot /silent /AutoUpdateCheck=Disabled EnableCEIP=false EnableTracing=false" -NoNewWindow -Wait
   Clear-Host
 
   #Desinstalation d'Office.
   Write-Host -ForegroundColor Yellow -Object "Desinstalation d'Office generique"
-  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe C:\Deploy\Apps\Office\Office365.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
-  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe C:\Deploy\Apps\Office\Office15.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe C:\Deploy\Apps\Office\Office365.vbs" -ArgumentList "ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe C:\Deploy\Apps\Office\Office15.vbs" -ArgumentList "ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
   Clear-Host
 
   #Installation Office.
@@ -134,7 +134,7 @@ function Install_Apps
 
   #Installation 7Zip.
   Write-Host -ForegroundColor Yellow -Object "Installation de 7Zip"
-  Start-Process -FilePath "C:\Deploy\Apps\7zip.exe /S" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Deploy\Apps\7zip.exe" -ArgumentList "/S" -NoNewWindow -Wait
 
   #Installation Adobe.
   Write-Host -ForegroundColor Yellow -Object "Installation d'Adobe"
@@ -173,7 +173,7 @@ function Cleaning_Install
   {
     New-ItemProperty -Path $Cleaning_REG_PATH -Name Run -Value $Cleaning_Command -PropertyType ExpandString
   }
-  
+
   if (test-path -path "$Cleaning_REG_PATH\run" | Out-Null)
   {
     Set-ItemProperty -Path $Cleaning_REG_PATH -Name Run -Value $Cleaning_Command -PropertyType ExpandString
