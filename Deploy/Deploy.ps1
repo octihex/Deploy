@@ -1,9 +1,20 @@
 #Vérifie si le script est lancée avec des permissions administrateur.
+<#
 if (!$(net session *>$null; $LASTEXITCODE -eq 0))
 {
   Write-Host -ForegroundColor Yellow -Object "Ce script a besoin d'être ouvert avec permissions d'administrateurs."
   Pause
   exit
+}
+#>
+
+$currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
+$testadmin = $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+
+if ($testadmin -eq $false) 
+{
+  Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
+  exit $LASTEXITCODE
 }
 
 #Fonction d'intégration au domaine avec renommage du poste.
@@ -75,13 +86,13 @@ function MAJ_Dell
   Write-Host -ForegroundColor Yellow -Object "Recherche des MAJ Dell"
 
   #Configure Dell Command Update et cherche les MAJ disponible
-  Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe /configure -silent -autoSuspendBitLocker=enable -userConsent=disable" -NoNewWindow -Wait
-  Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe /scan" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList "/configure -silent -autoSuspendBitLocker=enable -userConsent=disable" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList "/scan" -NoNewWindow -Wait
   Clear-Host
 
   #Installe toutes les MAJ
   Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Dell"
-  Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe /applyUpdates -reboot=disable" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList "/applyUpdates -reboot=disable" -NoNewWindow -Wait
   Clear-Host
   Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJDellOK | Out-Null
   Restart-Computer
@@ -162,6 +173,7 @@ function Cleaning_Install
   {
     New-ItemProperty -Path $Cleaning_REG_PATH -Name Run -Value $Cleaning_Command -PropertyType ExpandString
   }
+  
   if (test-path -path "$Cleaning_REG_PATH\run" | Out-Null)
   {
     Set-ItemProperty -Path $Cleaning_REG_PATH -Name Run -Value $Cleaning_Command -PropertyType ExpandString
