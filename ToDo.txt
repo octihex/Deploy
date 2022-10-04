@@ -1,0 +1,6 @@
+- Install de DCU si il n'est pas sur le poste
+- MAJ lenovo
+- Install auto de Vantage
+- Detection Constructeur | OK
+- Detection install DCU est bonne | OK
+
