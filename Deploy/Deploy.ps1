@@ -1,15 +1,6 @@
-#Vérifie si le script est lancée avec des permissions administrateur.
-<#
-if (!$(net session *>$null; $LASTEXITCODE -eq 0))
-{
-  Write-Host -ForegroundColor Yellow -Object "Ce script a besoin d'être ouvert avec permissions d'administrateurs."
-  Pause
-  exit
-}
-#>
-
 $currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
 $testadmin = $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+$DeployPath = "C:\Deploy"
 
 if ($testadmin -eq $false) 
 {
@@ -26,35 +17,35 @@ function Rename_PC
   if (Select-String -InputObject $NewNamePC -Pattern liblap)
   {
     Write-Host -Object "Ajout du poste au domaine dans l'OU Laptops"
-    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
     Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
   }
 
   elseif (Select-String -InputObject $NewNamePC -Pattern libdes) 
   { 
     Write-Host -Object "Ajout du poste au domaine dans l'OU Desktops"
-    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
     Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
   }
 
   elseif (Select-String -InputObject $NewNamePC -Pattern libol) 
   { 
     Write-Host -Object "Ajout du poste au domaine dans l'OU Laptops"
-    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
     Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
   }
 
   elseif (Select-String -InputObject $NewNamePC -Pattern libod) 
   { 
     Write-Host -Object "Ajout du poste au domaine dans l'OU Desktops"
-    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
     Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
   }
 
   else 
   {
     Write-Host -Object "Ajout du poste au domaine sans OU spécifique"
-    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
     Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -Restart
   }
 }
@@ -73,7 +64,7 @@ function MAJ_Windows
   #Désinstalle le module Powershell PSWindowsUpdate
   Uninstall-Module -Name PSWindowsUpdate -Force
   Clear-Host
-  Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
+  Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
   Restart-Computer
 }
 
@@ -94,7 +85,25 @@ function MAJ_Dell
   Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Dell"
   Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList "/applyUpdates -reboot=disable" -NoNewWindow -Wait
   Clear-Host
-  Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJDellOK | Out-Null
+  Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
+  Restart-Computer
+}
+
+#Fonction de MAJ Lenovo
+function MAJ_Lenovo 
+{
+  $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 3 - MAJ Lenovo"
+
+  #Recherche et installe toutes les MAJ Dell disponible
+  Write-Host -ForegroundColor Yellow -Object "Recherche des MAJ Lenovo"
+
+  #Configure Dell Command Update et cherche les MAJ disponible
+  Clear-Host
+
+  #Installe toutes les MAJ
+  Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Dell"
+  Clear-Host
+  Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
   Restart-Computer
 }
 
@@ -105,47 +114,47 @@ function Install_Apps
 
   #Installation UEM
   Write-Host -ForegroundColor Yellow -Object "Installation d'UEM"
-  Start-Process -FilePath "C:\Deploy\Apps\LANDesk.exe"
+  Start-Process -FilePath "$DeployPath\Apps\LANDesk.exe"
   Clear-Host
 
   #Installation Windows Defender.
   Write-Host -ForegroundColor Yellow -Object "Installation de Windows Defender"
-  Start-Process -FilePath "C:\Deploy\Apps\Defender\WindowsDefender.cmd" -NoNewWindow -Wait
+  Start-Process -FilePath "$DeployPath\Apps\Defender\WindowsDefender.cmd" -NoNewWindow -Wait
   Clear-Host
 
   #Installation Citrix.
   Write-Host -ForegroundColor Yellow -Object "Installation de Citrix"
-  Start-Process -FilePath "C:\Deploy\Apps\Citrix.exe" -ArgumentList "/noreboot /silent /AutoUpdateCheck=Disabled EnableCEIP=false EnableTracing=false" -NoNewWindow -Wait
+  Start-Process -FilePath "$DeployPath\Apps\Citrix.exe" -ArgumentList "/noreboot /silent /AutoUpdateCheck=Disabled EnableCEIP=false EnableTracing=false" -NoNewWindow -Wait
   Clear-Host
 
   #Desinstalation d'Office.
   Write-Host -ForegroundColor Yellow -Object "Desinstalation d'Office generique"
-  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe C:\Deploy\Apps\Office\Office365.vbs" -ArgumentList "ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
-  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe C:\Deploy\Apps\Office\Office15.vbs" -ArgumentList "ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe" -ArgumentList "$DeployPath\Apps\Office\Office365.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
+  Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe" -ArgumentList "$DeployPath\Apps\Office\Office15.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
   Clear-Host
 
   #Installation Office.
   TASKKILL /F /IM OfficeSetup.exe
-  Start-Process -FilePath "C:\Deploy\Apps\Office\OfficeSetup.exe"
+  Start-Process -FilePath "$DeployPath\Apps\Office\OfficeSetup.exe"
 
   #Installation Teams.
   Write-Host -ForegroundColor Yellow -Object "Installation de Teams"
-  Start-Process -FilePath "C:\Deploy\Apps\Office\TeamsSetup.exe -s" -NoNewWindow -Wait
+  Start-Process -FilePath "$DeployPath\Apps\Office\TeamsSetup.exe" -ArgumentList "-s" -NoNewWindow -Wait
 
   #Installation 7Zip.
   Write-Host -ForegroundColor Yellow -Object "Installation de 7Zip"
-  Start-Process -FilePath "C:\Deploy\Apps\7zip.exe" -ArgumentList "/S" -NoNewWindow -Wait
+  Start-Process -FilePath "$DeployPath\Apps\7zip.exe" -ArgumentList "/S" -NoNewWindow -Wait
 
   #Installation Adobe.
   Write-Host -ForegroundColor Yellow -Object "Installation d'Adobe"
-  Start-Process -FilePath "C:\Deploy\Apps\Adobe.exe" -ArgumentList "/sAll /rs /msi EULA_ACCEPT=YES" -NoNewWindow -Wait
+  Start-Process -FilePath "$DeployPath\Apps\Adobe.exe" -ArgumentList "/sAll /rs /msi EULA_ACCEPT=YES" -NoNewWindow -Wait
 
   #Installation Chrome.
   Write-Host -ForegroundColor Yellow -Object "Installation de Chrome"
-  Start-Process -FilePath "C:\Windows\System32\MsiExec.exe /i C:\Deploy\Apps\Chrome.msi /qn" -NoNewWindow -Wait
+  Start-Process -FilePath "$DeployPath\Apps\Chrome.exe" -ArgumentList "/silent /install" -NoNewWindow -Wait
 
   #Ajoute TeamViewerQS et le shortcut Teams.
-  Copy-Item -Path "C:\Deploy\Public\*" -Destination "C:\Users\Public\Desktop" -Recurse
+  Copy-Item -Path "$DeployPath\Public\*" -Destination "C:\Users\Public\Desktop" -Recurse
 
   #Attend que l'installation d'Office soit fini.
   While (Get-Process OfficeSetup -ErrorAction SilentlyContinue)
@@ -156,7 +165,7 @@ function Install_Apps
 
   Write-Host -ForegroundColor Yellow -Object "Fermeture d'Office."
   TASKKILL /F /IM OfficeC2RClient.exe
-  Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject AppsOK | Out-Null
+  Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject AppsOK | Out-Null
   Restart-Computer
 }
 
@@ -182,33 +191,38 @@ function Cleaning_Install
   #Suprime les fichiers d'installation et redemarre le poste.
   shutdown -s -t 5
   Set-Location C:\
-  C:\Deploy\Clean.lnk
+  Start-Process $DeployPath\Cleaning.lnk
 }
 
-if (!(Get-Content -Path C:\Deploy\Check-Install.txt -ErrorAction SilentlyContinue))
+#-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+if (!(Get-Content -Path $DeployPath\Check-Install.txt -ErrorAction SilentlyContinue))
 {
-  Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject DebugPlaceHolder | Out-Null
-  Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject DebugPlaceHolder | Out-Null
+  Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject DebugPlaceHolder | Out-Null
+  Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject DebugPlaceHolder | Out-Null
 }
+
+
+
 
 #Suivi d'étape de l'installation.
-if ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "AppsOK")
+if ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "AppsOK")
 {
   Cleaning_Install
 }
-elseif ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "MAJDellOK")
+elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "MAJConstructeursOK")
 {
   Install_Apps
 }
-elseif ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "MAJWindowsOK") 
+elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "MAJWindowsOK") 
 {
   MAJ_Dell
 }
-elseif ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "RenameOK") 
+elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "RenameOK") 
 {
   MAJ_Windows
 }
-elseif ((Get-Content -Path c:\Deploy\Check-Install.txt)[-1] -eq "DebugPlaceHolder") 
+elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "DebugPlaceHolder") 
 {
   Rename_PC
 }
