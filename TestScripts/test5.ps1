@@ -13,10 +13,10 @@ Function TestFunc
     
     if ($Testvar) 
     { 
-        if ((($Testvar | Select-Object -First 1).Line.Split(' ')[-1]) -eq "SUCCESS") 
-        {
-            Write-Host -Object "OK"
-        }
+      if ((($Testvar | Select-Object -First 1).Line.Split(' ')[-1]) -eq "SUCCESS") 
+      {
+        Write-Host -Object "OK"
+      }
 
         if (!((($Testvar | Select-Object -First 1).Line.Split(' ')[-1]) -eq "SUCCESS")) 
         {

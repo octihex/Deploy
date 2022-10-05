@@ -4,50 +4,51 @@ $DeployPath = "C:\Deploy"
 
 if ($testadmin -eq $false) 
 {
-  Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
-  exit $LASTEXITCODE
+    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
+    exit $LASTEXITCODE
 }
 
 #Fonction d'intégration au domaine avec renommage du poste.
 function Rename_PC 
 {
-  $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 1 - Domaine"
-  $newNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
+    $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 1 - Domaine"
+    $newNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
+    $ArrLaptops = "Libla", "Libol"
+    $ArrDesktops = "Libde", "Libod"
 
-  if (Select-String -InputObject $NewNamePC -Pattern liblap)
-  {
-    Write-Host -Object "Ajout du poste au domaine dans l'OU Laptops"
-    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-    Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
-  }
+    If ($newNamePc.Length -ge 5)
+    {
+        Switch ($newNamePc.Substring(0,5)) 
+        {
+            {$ArrLaptops -eq $_} 
+            {  
+                Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Laptops"
+                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+                Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
+            }
 
-  elseif (Select-String -InputObject $NewNamePC -Pattern libdes) 
-  { 
-    Write-Host -Object "Ajout du poste au domaine dans l'OU Desktops"
-    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-    Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
-  }
+            {$ArrDesktops -eq $_}
+            {
+                Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Desktops"
+                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+                Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
+            }
 
-  elseif (Select-String -InputObject $NewNamePC -Pattern libol) 
-  { 
-    Write-Host -Object "Ajout du poste au domaine dans l'OU Laptops"
-    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-    Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
-  }
+            Default 
+            {
+                Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine sans OU spécifique"
+                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+                Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -Restart
+            }
+        }
+    }
 
-  elseif (Select-String -InputObject $NewNamePC -Pattern libod) 
-  { 
-    Write-Host -Object "Ajout du poste au domaine dans l'OU Desktops"
-    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-    Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
-  }
-
-  else 
-  {
-    Write-Host -Object "Ajout du poste au domaine sans OU spécifique"
-    Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-    Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -Restart
-  }
+    Else 
+    {
+        Write-Host -ForegroundColor Yellow -Object "Le nom du poste doit au moins contenir 5 characters"
+        Pause
+        Rename_PC
+    }
 }
 
 #Fonction de MAJ Windows
