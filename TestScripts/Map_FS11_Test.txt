@@ -1,0 +1,2 @@
+PS X:\> (New-Object -ComObject WScript.Network).MapNetworkDrive("Z:", "\\FS11LIB1FR\Logiciels")
+PS X:\> X:
