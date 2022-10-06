@@ -72,19 +72,53 @@ function MAJ_Windows
 #Fonction de MAJ Dell
 function MAJ_Dell 
 {
+    $DCU_Path = "C:\Program Files (x86)\Dell\CommandUpdate"
+    if (!(Test-Path -PathType leaf -Path "$DCU_Path\dcu-cli.exe"))
+    {
+        Start-Process -FilePath "$DeployPath\Apps\DCU_4.6.0.exe" -ArgumentList "/s /l=$DeployPath\DCU_Install_Log.txt" -NoNewWindow -Wait
+
+        While (!$CheckInstallDCU) 
+        {          
+            Clear-Host
+            $CheckInstallDCU = (Select-String -Path "C:\Deploy\DCU_Install_Log.txt" -Pattern 'Name of Exit Code:')
+            Write-Host -ForegroundColor Yellow -Object "Installation de Dell Command Update en cours."
+            Start-Sleep -Seconds 5   
+        }
+
+        if ((($CheckInstallDCU | Select-Object -First 1).Line.Split(' ')[-1]) -eq "SUCCESS") 
+        {
+            MAJ_Dell
+        }
+
+        Else 
+        {
+            #Install pas OK - faire truc
+            Write-Host -ForegroundColor Yellow -Object "L'installation automatique de Dell Command Update a échoué."
+            Write-Host -ForegroundColor Yellow -Object "Le script va ouvrir l'installateur manuellement mais n'aurra pas consience de sa bonne installation."
+            Write-Host -ForegroundColor Yellow -Object "Veuillez entrez OK quand l'installation serra fini."
+            Pause
+            While ($DCUInstallOK -ne "OK") 
+            {          
+                Clear-Host
+                $DCUInstallOK = Read-Host -Prompt "Veuillez entrez OK quand l'installation de serra fini."   
+            }
+            MAJ_Dell
+        }
+    }
+
   	$host.UI.RawUI.WindowTitle = "Installation Poste - Etape 3 - MAJ Dell"
 
   	#Recherche et installe toutes les MAJ Dell disponible
   	Write-Host -ForegroundColor Yellow -Object "Recherche des MAJ Dell"
 
   	#Configure Dell Command Update et cherche les MAJ disponible
-  	Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList "/configure -silent -autoSuspendBitLocker=enable -userConsent=disable" -NoNewWindow -Wait
-  	Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList "/scan" -NoNewWindow -Wait
+  	Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/configure -silent -autoSuspendBitLocker=enable -userConsent=disable" -NoNewWindow -Wait
+  	Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/scan" -NoNewWindow -Wait
   	Clear-Host
 
   	#Installe toutes les MAJ
   	Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Dell"
-  	Start-Process -FilePath "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe" -ArgumentList "/applyUpdates -reboot=disable" -NoNewWindow -Wait
+  	Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/applyUpdates -reboot=disable" -NoNewWindow -Wait
   	Clear-Host
   	Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
   	Restart-Computer
@@ -107,7 +141,7 @@ function Install_Apps
 
   	#Installation Citrix.
   	Write-Host -ForegroundColor Yellow -Object "Installation de Citrix"
-  	Start-Process -FilePath "$DeployPath\Apps\Citrix.exe" -ArgumentList "/noreboot /silent /AutoUpdateCheck=Disabled EnableCEIP=false EnableTracing=false" -NoNewWindow -Wait
+  	Start-Process -FilePath "$DeployPath\Apps\Citrix.exe" -ArgumentList "/noreboot /silent /AutoUpdateCheck=Disabled EnableCEIP=false EnableTracing=false" -NoNewWindow
   	Clear-Host
 
   	#Desinstalation d'Office.
@@ -137,7 +171,7 @@ function Install_Apps
   	Start-Process -FilePath "$DeployPath\Apps\Chrome.exe" -ArgumentList "/silent /install" -NoNewWindow -Wait
 
   	#Ajoute TeamViewerQS et le shortcut Teams.
-  	Copy-Item -Path "$DeployPath\Public\*" -Destination "C:\Users\Public\Desktop" -Recurse
+  	Copy-Item -Path "$DeployPath\Apps\Public\*" -Destination "C:\Users\Public\Desktop" -Recurse
 
   	#Attend que l'installation d'Office soit fini.
   	While (Get-Process OfficeSetup -ErrorAction SilentlyContinue)
@@ -174,7 +208,7 @@ function Cleaning_Install
   	#Suprime les fichiers d'installation et redemarre le poste.
   	shutdown -s -t 5
   	Set-Location C:\
-  	Start-Process $DeployPath\Cleaning.lnk
+  	Start-Process C:\Deploy\Cleaning.lnk
 }
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -186,34 +220,38 @@ if (!(Get-Content -Path $DeployPath\Check-Install.txt -ErrorAction SilentlyConti
 }
 
 #Suivi d'étape de l'installation.
-if ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "AppsOK")
-{
-  	Cleaning_Install
-}
 
-elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "MAJConstructeursOK")
+Switch ((Get-Content -Path $DeployPath\Check-Install.txt)[-1]) 
 {
-  	Install_Apps
-}
+    {$_ -eq "AppsOK"} 
+    {  
+        Cleaning_Install
+    }
 
-elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "MAJWindowsOK") 
-{
-  	MAJ_Dell
-}
+    {$_ -eq "MAJConstructeursOK"}
+    {
+        Install_Apps
+    }
 
-elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "RenameOK") 
-{
-  	MAJ_Windows
-}
+    {$_ -eq "MAJWindowsOK"}
+    {
+        MAJ_Dell
+    }
 
-elseif ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "DebugPlaceHolder") 
-{
-  	Rename_PC
-}
+    {$_ -eq "RenameOK"}
+    {
+        MAJ_Windows
+    }
 
-else
-{
-  	Write-Host -ForegroundColor Yellow -Object "Erreur du script, Fermeture."
-  	Pause
-  	exit
+    {$_ -eq "DebugPlaceHolder"}
+    {
+        Rename_PC
+    }
+
+    Default 
+    {
+        Write-Host -ForegroundColor Yellow -Object "Erreur dans l'étape du script, fermeture."
+        Start-Sleep -Seconds 5
+  	    exit
+    }
 }
