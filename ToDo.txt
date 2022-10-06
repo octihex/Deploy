@@ -1,0 +1,4 @@
+- Install de DCU si il n'est pas sur le poste | OK
+- Detection Constructeur | OK
+- Detection install DCU est bonne | OK
+- Refaire fonctionnement de l'install | OK
