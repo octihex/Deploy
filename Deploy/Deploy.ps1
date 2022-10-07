@@ -15,6 +15,7 @@ If ($testadmin -eq $false)
 function Rename_PC 
 {
     $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 1 - Domaine"
+    Write-Host -ForegroundColor Yellow -Object (Get-CimInstance -ClassName Win32_Bios).serialnumber
     $NewNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
     $ArrLaptops = "Libla", "Libol"
     $ArrDesktops = "Libde", "Libod"

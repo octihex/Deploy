@@ -28,3 +28,4 @@ Write-Host -ForegroundColor Yellow -Object "Transfert des fichiers sur le poste"
 Copy-Item -Path "$USB_Folder\Deploy\*" -Destination $DeployPath -Recurse
 Copy-Item -Path "$DeployPath\Deploy.lnk" -Destination "C:\Users\ceprt\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup"
 Start-Process Powershell -ArgumentList "$DeployPath\Deploy.ps1"
+exit
