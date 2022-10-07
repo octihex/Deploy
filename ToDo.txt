@@ -2,3 +2,6 @@
 - Detection Constructeur | OK
 - Detection install DCU est bonne | OK
 - Refaire fonctionnement de l'install | OK
+- Citrix pas autolaunch
+- Adobe silent
+- Teams pas autolaunch

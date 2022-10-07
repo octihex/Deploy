@@ -67,7 +67,7 @@ function MAJ_Windows
   	Install-Module -Name PSWindowsUpdate -Confirm:$False -Force | Out-Null
   	#Télécharge et installe toutes les MAJ disponible ( MAJ normale et MAJ facultative )
   	Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Windows"
-  	Get-WindowsUpdate -Download -AcceptAll -Install
+  	Get-WindowsUpdate -Download -AcceptAll -Install -IgnoreReboot
   	#Désinstalle le module Powershell PSWindowsUpdate
   	Uninstall-Module -Name PSWindowsUpdate -Force
 	Remove-Item "C:\Program Files\PackageManagement\ProviderAssemblies\nuget" -Recurse -ErrorAction SilentlyContinue
@@ -90,6 +90,30 @@ function MAJ_Dell
             $CheckInstallDCU = (Select-String -Path "C:\Deploy\DCU_Install_Log.txt" -Pattern 'Name of Exit Code:')
             Write-Host -ForegroundColor Yellow -Object "Installation de Dell Command Update en cours."
             Start-Sleep -Seconds 5   
+        }
+
+        $ArrDCUCode = "SUCCESS", "REBOOT_REQUIRED"
+
+        Switch (($CheckInstallDCU | Select-Object -First 1).Line.Split(' ')[-1]) 
+        {
+            {$ArrDCUCode -eq $_} 
+            {  
+                MAJ_Dell
+            }
+
+            Default 
+            {
+                Write-Host -ForegroundColor Yellow -Object "L'installation automatique de Dell Command Update a échoué."
+                Write-Host -ForegroundColor Yellow -Object "Le script va ouvrir l'installateur manuellement mais n'aurra pas consience de sa bonne installation."
+                Pause
+                Start-Process -FilePath "$DeployPath\Apps\DCU_4.6.0.exe" -ArgumentList "/l=$DeployPath\DCU_Install_Log.txt"
+                While ($DCUInstallOK -ne "OK") 
+                {          
+                    Clear-Host
+                    $DCUInstallOK = Read-Host -Prompt "Veuillez entrez OK quand l'installation de serra fini."   
+                }
+                MAJ_Dell
+            }
         }
 
         If ((($CheckInstallDCU | Select-Object -First 1).Line.Split(' ')[-1]) -eq "SUCCESS") 
@@ -184,9 +208,10 @@ Function Install_Apps
 
 	#Installation Adobe.
 	Write-Host -ForegroundColor Yellow -Object "Installation d'Adobe"
-	Start-Process -FilePath "$DeployPath\Apps\Adobe.exe" -ArgumentList "/sAll /rs /msi EULA_ACCEPT=YES" -NoNewWindow -Wait
+	Start-Process -FilePath "$DeployPath\Apps\Adobe.exe" -ArgumentList "/sAll /rs /msi EULA_ACCEPT=YES" -NoNewWindow
     #Configure les .PDF pour être ouvert avec Adobe
-	(. $DeployPath\Optionnel\SFTA.ps1); (Set-FTA AcroExch.Document.DC .pdf)
+    Set-Location $DeployPath\Optionnel
+	. .\SFTA.ps1; (Set-FTA AcroExch.Document.DC .pdf)
 
   	Write-Host -ForegroundColor Yellow -Object "Fermeture d'Office."
   	TASKKILL /F /IM OfficeC2RClient.exe
@@ -199,7 +224,7 @@ function Cleaning_Install
 {
   	#Demande de changer le MDP du compte CEPRT
   	net user CEPRT *
-  	Remove-Item "C:\Users\schadour\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Deploy.lnk" | Out-Null
+  	Remove-Item "C:\Users\ceprt\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Deploy.lnk" | Out-Null
   	Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 5
 	Set-ExecutionPolicy -ExecutionPolicy Restricted -Force
   
