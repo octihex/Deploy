@@ -1,0 +1,43 @@
+:CONFIGURATION:
+ 
+Faire les mises à jours (Windows + Dell)
+ 
+Nommer le poste (voir Identifiant du domaine) => System Properties Advanced
+
+Créer et coller l’étiquette de nommage sur le poste
+ 
+Mettre le poste sur le domaine : ceva.net 
+
+Mettre le poste dans la bonne OU sur l'AD (de base le poste arrive dans l'OU Computers)
+
+Faire un reboot
+ 
+Forcer l’application des GPO suite au changement d’unité d’organisation => gpupdate 
+
+Penser à bien mettre le mot de passe au compte CEPRT   
+
+ 
+
+
+:APPLICATIONS:  
+
+Installer Crowdstrike 
+  
+Installer l'UEM (LANDesk)
+ 
+Installer Chrome 
+
+Installer Adobe Reader DC
+ 
+Installer Citrix Workspace 
+ 
+Installer 7zip  
+
+Désinstaller Office 
+
+Installer Office 365 
+
+Installer Teams
+
+Mettre Teamviewer QS et Microsoft Teams sur le Bureau Public => public.cmd 
+

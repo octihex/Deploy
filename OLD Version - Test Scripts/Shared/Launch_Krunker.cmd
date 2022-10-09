@@ -1,0 +1,1 @@
+wscript.exe C:\Users\%username%\Shared\Hide.vbs C:\Users\%username%\Shared\Krunker.cmd %*

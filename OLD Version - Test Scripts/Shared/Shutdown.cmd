@@ -1,0 +1,1 @@
+plink -ssh root@10.42.0.1 -pw #PASSWORD poweroff

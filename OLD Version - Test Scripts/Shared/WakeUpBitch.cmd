@@ -1,0 +1,1 @@
+F:\Softwares\WOL\WakeMeOnLan.exe /wakeup #MAC
