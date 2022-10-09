@@ -1,10 +1,7 @@
 $DeployPath = "C:\Deploy"
 
 # ---> Check si le script est lancée en Admin sinon le relance avec élévation
-$currentUser = New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())
-$testadmin = $currentUser.IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
-
-If ($testadmin -eq $false) 
+if (!(Get-SMBSession -ErrorAction SilentlyContinue)) 
 {
     Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
     Exit $LASTEXITCODE
@@ -14,8 +11,8 @@ If ($testadmin -eq $false)
 #Fonction d'intégration au domaine avec renommage du poste.
 function Rename_PC 
 {
-    $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 1 - Domaine"
-    Write-Host -ForegroundColor Yellow -Object (Get-CimInstance -ClassName Win32_Bios).serialnumber
+    $Host.UI.RawUI.WindowTitle = "Installation Poste - Etape 1 - Domaine"
+    Write-Host -ForegroundColor Yellow -Object "Numéro de série :", (Get-CimInstance -ClassName Win32_Bios).serialnumber
     $NewNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
     $ArrLaptops = "Libla", "Libol"
     $ArrDesktops = "Libde", "Libod"
@@ -61,19 +58,25 @@ function Rename_PC
 #Fonction de MAJ Windows
 function MAJ_Windows 
 {
-  	$host.UI.RawUI.WindowTitle = "Installation Poste - Etape 2 - MAJ Windows"
-  	#Installe le module Powershell PSWindowsUpdate et le module supplémentaire NuGet.
-  	Write-Host -ForegroundColor Yellow -Object "Configuration des MAJ Windows"
-  	Install-PackageProvider -Name NuGet -Confirm:$false -Force | Out-Null
-  	Install-Module -Name PSWindowsUpdate -Confirm:$False -Force | Out-Null
+    If (!(Get-InstalledModule -Name PSWindowsUpdate -ErrorAction SilentlyContinue))
+    {
+        $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 2 - MAJ Windows"
+        #Installe le module Powershell PSWindowsUpdate et le module supplémentaire NuGet.
+  	    Write-Host -ForegroundColor Yellow -Object "Configuration des MAJ Windows"
+  	    Install-PackageProvider -Name NuGet -Confirm:$false -Force | Out-Null
+  	    Install-Module -Name PSWindowsUpdate -Confirm:$False -Force | Out-Null
+    }
+  	
+    Clear-Host
   	#Télécharge et installe toutes les MAJ disponible ( MAJ normale et MAJ facultative )
   	Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Windows"
   	Get-WindowsUpdate -Download -AcceptAll -Install -IgnoreReboot
-  	#Désinstalle le module Powershell PSWindowsUpdate
-  	Uninstall-Module -Name PSWindowsUpdate -Force
-	Remove-Item "C:\Program Files\PackageManagement\ProviderAssemblies\nuget" -Recurse -ErrorAction SilentlyContinue
-  	Clear-Host
-  	Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
+  	
+    If ((Get-Content -Path $DeployPath\Check-Install.txt)[-1] -eq "RenameOK")
+    {
+        Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
+    }
+
   	Restart-Computer
 }
 
@@ -83,14 +86,21 @@ function MAJ_Dell
     $DCU_Path = "C:\Program Files (x86)\Dell\CommandUpdate"
     If (!(Test-Path -PathType leaf -Path "$DCU_Path\dcu-cli.exe"))
     {
+        Write-Host -ForegroundColor Yellow -Object "Installation automatique de Dell Command Update en cours."
         Start-Process -FilePath "$DeployPath\Apps\DCU_4.6.0.exe" -ArgumentList "/s /l=$DeployPath\DCU_Install_Log.txt" -NoNewWindow -Wait
+        Clear-Host
 
         While (!$CheckInstallDCU) 
         {          
-            Clear-Host
             $CheckInstallDCU = (Select-String -Path "C:\Deploy\DCU_Install_Log.txt" -Pattern 'Name of Exit Code:')
-            Write-Host -ForegroundColor Yellow -Object "Installation de Dell Command Update en cours."
-            Start-Sleep -Seconds 5   
+            $teststr = "Installation de Dell Command Update en cours"
+            For ($Counter = 1 ; $Counter -le 3 ; $Counter++)
+            {    
+                Clear-Host
+                $teststr = "$teststr" + "."
+                Write-Host -ForegroundColor Yellow -Object $teststr
+                Start-Sleep 1
+            }   
         }
 
         $ArrDCUCode = "SUCCESS", "REBOOT_REQUIRED"
@@ -220,11 +230,21 @@ Function Install_Apps
   	Restart-Computer
 }
 
+Function LastCheck 
+{
+    
+}
+
+
+
 #Fonction de notoyage des fichier d'installation
 function Cleaning_Install 
 {
   	#Demande de changer le MDP du compte CEPRT
   	net user CEPRT *
+    #Désinstalle le module Powershell PSWindowsUpdate
+  	Uninstall-Module -Name PSWindowsUpdate -Force
+    Remove-Item "C:\Program Files\PackageManagement\ProviderAssemblies\nuget" -Recurse -ErrorAction SilentlyContinue
   	Remove-Item "C:\Users\ceprt\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Deploy.lnk" | Out-Null
   	Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 5
 	Set-ExecutionPolicy -ExecutionPolicy Restricted -Force

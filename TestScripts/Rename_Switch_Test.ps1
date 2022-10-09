@@ -14,5 +14,9 @@ switch ($newNamePc.Substring(0,5))
     { 
         "You entered Des." 
     }
-    Default { "You didn't enter PC."}
+
+    Default 
+    { 
+        "You didn't enter PC."
+    }
 }

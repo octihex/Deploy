@@ -1,7 +1,4 @@
-﻿foreach ($line in (Get-CimInstance -ClassName Win32_ComputerSystem).manufacturer)
-{
-    $Manufacturer = ($line.Split(" "))[0]
-}
+﻿$Manufacturer = ((Get-CimInstance -ClassName Win32_ComputerSystem).manufacturer).Split(' ')[0]
 
 if (Select-String -InputObject $Manufacturer -Pattern Lenovo) 
 {

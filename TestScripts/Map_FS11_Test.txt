@@ -1,2 +1,10 @@
-PS X:\> (New-Object -ComObject WScript.Network).MapNetworkDrive("Z:", "\\FS11LIB1FR\Logiciels")
-PS X:\> X:
+#OLD
+(New-Object -ComObject WScript.Network).MapNetworkDrive("Z:", "\\FS11LIB1FR\Logiciels")
+
+#New
+$Testvar = Get-Credential
+New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Logiciels" -Persist -Credential $testvar
+#Test si user a l'accès avec une cible fixe
+Test-Path -PathType leaf -Path "\\DESKTOP-2RI7D9E\Desktop\Cemu.lnk" -ErrorAction SilentlyContinue
+#ou
+test-path -PathType container K:\
