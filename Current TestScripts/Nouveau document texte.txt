@@ -1,0 +1,106 @@
+PS C:\WINDOWS\system32> $Testvar = Get-Credential
+
+applet de commande Get-Credential à la position 1 du pipeline de la commande
+Fournissez des valeurs pour les paramètres suivants :
+Credential
+PS C:\WINDOWS\system32> New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Logiciels" -Persist -Credential $testvar
+New-PSDrive : Le nom d’utilisateur ou le mot de passe est incorrect
+Au caractère Ligne:1 : 1
++ New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Lo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation : (K:PSDriveInfo) [New-PSDrive], Win32Exception
+    + FullyQualifiedErrorId : CouldNotMapNetworkDrive,Microsoft.PowerShell.Commands.NewPSDriveCommand
+
+PS C:\WINDOWS\system32> $Testvar = Get-Credential
+
+applet de commande Get-Credential à la position 1 du pipeline de la commande
+Fournissez des valeurs pour les paramètres suivants :
+Credential
+PS C:\WINDOWS\system32> New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Logiciels" -Persist -Credential $testvar
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+K                2747,89       2371,98 FileSystem    \\FS11LIB1FR\Logiciels
+
+
+PS C:\WINDOWS\system32> if (!(New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Logiciels" -Persist -Credential $testvar)) {Write-Host -Object "NOK"}
+New-PSDrive : Nom de périphérique local déjà utilisé
+Au caractère Ligne:1 : 7
++ if (!(New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB ...
++       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation : (K:PSDriveInfo) [New-PSDrive], Win32Exception
+    + FullyQualifiedErrorId : CouldNotMapNetworkDrive,Microsoft.PowerShell.Commands.NewPSDriveCommand
+
+NOK
+PS C:\WINDOWS\system32> if (!(New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Logiciels" -Persist -Credential $testvar -ErrorAction SilentlyContinue)) {Write-Host -Object "NOK"}
+NOK
+PS C:\WINDOWS\system32> k:
+PS K:\> dir
+
+
+    Répertoire : K:\
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d-----        19/06/2020     08:32                Audit
+d-----        21/09/2021     16:14                DEPLOIEMENT
+d-----        29/04/2022     12:11                Ivanti2021-1
+d-----        11/03/2020     07:57                Logs
+d-----        11/05/2022     11:42                MAJ WINDOWS
+d-----        16/08/2022     16:02                O2ID
+d-----        21/07/2021     14:37                Outils
+d-----        27/02/2019     10:11                Scripts
+d-----        26/02/2021     16:19                _DRIVERS
+d-----        22/01/2021     14:13                _MACINTOSH
+d-----        19/06/2020     09:28                _MACOS
+d-----        17/08/2022     12:41                _WINDOWS
+-a----        12/04/2019     22:29            179 172.21.19.30_LIBID18025_Couloir.vnc
+-a----        12/04/2019     22:29            206 172.21.19.31_LIBID18026_Local_R0501_Haut.vnc
+-a----        12/04/2019     22:29            127 172.21.19.32_LIBID18276_Local_R0501_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.33_LIBID18027_Local_R0502_Haut.vnc
+-a----        12/04/2019     22:29            187 172.21.19.34_LIBID18277_Local_R0502_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.35_LIBID18028_Local_R0503_Haut.vnc
+-a----        12/04/2019     22:29            161 172.21.19.36_LIBID18278_Local_R0503_Bas.vnc
+-a----        12/04/2019     22:29            188 172.21.19.37_LIBID18029_Local_R0504_Haut.vnc
+-a----        12/04/2019     22:29            127 172.21.19.38_LIBID18279_Local_R0504_Bas.vnc
+-a----        12/04/2019     22:29            186 172.21.19.39_LIBID18030_Local_Stockage.vnc
+-a----        12/04/2019     22:29            169 172.21.19.40_LIBID18031_Local_Remplissage Verre.vnc
+-a----        12/04/2019     22:29            173 172.21.19.41_LIBID18032_Local_Remplissage_Plastique.vnc
+-a----        12/04/2019     22:29            157 172.21.19.42_LIBID18280_Station_NEP.vnc
+-a---l        29/03/2021     09:00       28797948 205205.ZIP
+-a---l        30/03/2021     14:12      446901843 6.5.1d-hotfix7-2021Mar12-39a4a112.tgz
+-a---l        13/01/2021     17:13     6390022144 cohesity-6.5.1d_release-20201226_1fee0cd5-centos.iso
+-a----        26/01/2021     14:18            786 licences 2021 Scorepop.txt
+-a----        21/01/2022     15:24           1040 licences POP2022.txt
+-a----        07/11/2018     10:59            171 Nouveau document texte.txt
+
+
+PS K:\> Remove-PSDrive -Name "K" -Force
+PS K:\>
+PS K:\>
+PS K:\>
+PS K:\> dir
+dir : Impossible de trouver le chemin d'accès « K:\ », car il n'existe pas.
+Au caractère Ligne:1 : 1
++ dir
++ ~~~
+    + CategoryInfo          : ObjectNotFound: (K:\:String) [Get-ChildItem], ItemNotFoundException
+    + FullyQualifiedErrorId : PathNotFound,Microsoft.PowerShell.Commands.GetChildItemCommand
+
+PS K:\> c:
+PS C:\WINDOWS\system32> if (!(New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Logiciels" -Persist -Credential $testvar -ErrorAction SilentlyContinue)) {Write-Host -Object "NOK"}
+PS C:\WINDOWS\system32> k:                                                                                              PS K:\> c:
+PS C:\WINDOWS\system32> Remove-PSDrive -Name "K" -Force
+PS C:\WINDOWS\system32> if (New-PSDrive -Name "K" -PSProvider "FileSystem" -Root "\\FS11LIB1FR\Logiciels" -Persist -Credential $testvar -ErrorAction SilentlyContinue) {Write-Host -Object "OK"}
+OK
+PS C:\WINDOWS\system32> Remove-PSDrive -Name "K" -Force
+PS C:\WINDOWS\system32> Remove-PSDrive -Name "K" -Force
+Remove-PSDrive : Lecteur introuvable. Il n'existe aucun lecteur nommé « K ».
+Au caractère Ligne:1 : 1
++ Remove-PSDrive -Name "K" -Force
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (K:String) [Remove-PSDrive], DriveNotFoundException
+    + FullyQualifiedErrorId : DriveNotFound,Microsoft.PowerShell.Commands.RemovePSDriveCommand
+
+PS C:\WINDOWS\system32>

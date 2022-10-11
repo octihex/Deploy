@@ -5,7 +5,7 @@ If (!$Testvar)
     Write-Host -Object "Pas de MAJs, On continue"
 }
 
-If ($Testvar)
+If (Get-WindowsUpdate)
 {
     Write-Host -Object "Nouvelle MAJs, On reinstall"
 }

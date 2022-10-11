@@ -1,7 +1,7 @@
 $DeployPath = "C:\Deploy"
 
 # ---> Check si le script est lancée en Admin sinon le relance avec élévation
-if (!(Get-SMBSession -ErrorAction SilentlyContinue)) 
+If (!((New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))) 
 {
     Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
     Exit $LASTEXITCODE
@@ -12,46 +12,42 @@ if (!(Get-SMBSession -ErrorAction SilentlyContinue))
 function Rename_PC 
 {
     $Host.UI.RawUI.WindowTitle = "Installation Poste - Etape 1 - Domaine"
-    Write-Host -ForegroundColor Yellow -Object "Numéro de série :", (Get-CimInstance -ClassName Win32_Bios).serialnumber
-    $NewNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
-    $ArrLaptops = "Libla", "Libol"
-    $ArrDesktops = "Libde", "Libod"
-	#Check si la variable NewNamePC a au moins 5 characters et compare le resultat avec les 2 arrays de noms d'ordinateur.
-    If ($NewNamePc.Length -ge 5)
+    Write-Host "Numéro de série : " -NoNewline; Write-Host -ForegroundColor Yellow (Get-CimInstance -ClassName Win32_Bios).serialnumber
+
+    While (!$NewNamePc) 
     {
-        Switch ($NewNamePc.Substring(0,5)) 
-        {
-            {$ArrLaptops -eq $_} 
-            {  
-                Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Laptops"
-                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-				#Ajoute le poste au domaine avec le nouveau nom dans l'OU Laptops
-                Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
-            }
-
-            {$ArrDesktops -eq $_}
-            {
-                Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Desktops"
-                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-				#Ajoute le poste au domaine avec le nouveau nom dans l'OU Desktops
-                Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
-            }
-
-            Default 
-            {
-                Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine sans OU spécifique"
-                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
-				#Ajoute le poste au domaine avec le nouveau nom.
-                Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -Restart
-            }
-        }
+        $NewNamePc = Read-Host -Prompt "Nouveau nom de l'ordinateur"
     }
 
-    Else 
+    $ArrLaptops = "Liblapoff", "Libol"
+    $ArrDesktops = "Libdesoff", "Libod"
+	#Check si la variable NewNamePC a au moins 5 characters et compare le resultat avec les 2 arrays de noms d'ordinateur.
+    
+    Switch (($NewNamePc -split '(?<=\D)(?=\d)')[0]) 
     {
-        Write-Host -ForegroundColor Yellow -Object "Le nom du poste doit au moins contenir 5 characters"
-        Pause
-        Rename_PC
+        {$ArrLaptops -eq $_} 
+        {  
+            Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Laptops"
+            Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+			#Ajoute le poste au domaine avec le nouveau nom dans l'OU Laptops
+            Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
+        }
+
+        {$ArrDesktops -eq $_}
+        {
+            Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Desktops"
+            Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+			#Ajoute le poste au domaine avec le nouveau nom dans l'OU Desktops
+            Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
+        }
+
+        Default 
+        {
+            Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine sans OU spécifique"
+            Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+			#Ajoute le poste au domaine avec le nouveau nom.
+            Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -Restart
+        }
     }
 }
 
