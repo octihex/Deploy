@@ -21,6 +21,7 @@ function Rename_PC
 
     $ArrLaptops = "Liblapoff", "Libol"
     $ArrDesktops = "Libdesoff", "Libod"
+    $ArrOUPath = "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net", "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net"
 	#Check si la variable NewNamePC a au moins 5 characters et compare le resultat avec les 2 arrays de noms d'ordinateur.
     
     Switch (($NewNamePc -split '(?<=\D)(?=\d)')[0]) 
@@ -30,7 +31,7 @@ function Rename_PC
             Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Laptops"
             Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
 			#Ajoute le poste au domaine avec le nouveau nom dans l'OU Laptops
-            Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
+            Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath $ArrOUPath[0] -Restart
         }
 
         {$ArrDesktops -eq $_}
@@ -38,7 +39,7 @@ function Rename_PC
             Write-Host -ForegroundColor Yellow -Object "Ajout du poste au domaine dans l'OU Desktops"
             Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
 			#Ajoute le poste au domaine avec le nouveau nom dans l'OU Desktops
-            Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
+            Add-Computer -DomainName ceva.net -Force -NewName $NewNamePC -OUPath $ArrOUPath[1] -Restart
         }
 
         Default 
@@ -79,8 +80,19 @@ function MAJ_Windows
 #Fonction de MAJ Dell
 function MAJ_Dell 
 {
-    $DCU_Path = "C:\Program Files (x86)\Dell\CommandUpdate"
-    If (!(Test-Path -PathType leaf -Path "$DCU_Path\dcu-cli.exe"))
+    $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 3 - MAJ Dell"
+
+    If (Test-Path -PathType leaf -Path "C:\Program Files (x86)\Dell\CommandUpdate\dcu-cli.exe")
+    {
+        $DCU_Path = "C:\Program Files (x86)\Dell\CommandUpdate"
+    }
+
+    If (Test-Path -PathType leaf -Path "C:\Program Files\Dell\CommandUpdate\dcu-cli.exe")
+    {
+        $DCU_Path = "C:\Program Files\Dell\CommandUpdate"
+    }
+
+    if (!$DCU_Path) 
     {
         Write-Host -ForegroundColor Yellow -Object "Installation automatique de Dell Command Update en cours."
         Start-Process -FilePath "$DeployPath\Apps\DCU_4.6.0.exe" -ArgumentList "/s /l=$DeployPath\DCU_Install_Log.txt" -NoNewWindow -Wait
@@ -89,12 +101,12 @@ function MAJ_Dell
         While (!$CheckInstallDCU) 
         {          
             $CheckInstallDCU = (Select-String -Path "C:\Deploy\DCU_Install_Log.txt" -Pattern 'Name of Exit Code:')
-            $teststr = "Installation de Dell Command Update en cours"
+            $DCUTestCountStr = "Installation de Dell Command Update en cours"
             For ($Counter = 1 ; $Counter -le 3 ; $Counter++)
             {    
                 Clear-Host
-                $teststr = "$teststr" + "."
-                Write-Host -ForegroundColor Yellow -Object $teststr
+                $DCUTestCountStr = "$DCUTestCountStr" + "."
+                Write-Host -ForegroundColor Yellow -Object $DCUTestCountStr
                 Start-Sleep 1
             }   
         }
@@ -114,36 +126,17 @@ function MAJ_Dell
                 Write-Host -ForegroundColor Yellow -Object "Le script va ouvrir l'installateur manuellement mais n'aurra pas consience de sa bonne installation."
                 Pause
                 Start-Process -FilePath "$DeployPath\Apps\DCU_4.6.0.exe" -ArgumentList "/l=$DeployPath\DCU_Install_Log.txt"
+
                 While ($DCUInstallOK -ne "OK") 
                 {          
                     Clear-Host
                     $DCUInstallOK = Read-Host -Prompt "Veuillez entrez OK quand l'installation de serra fini."   
                 }
+
                 MAJ_Dell
             }
         }
-
-        If ((($CheckInstallDCU | Select-Object -First 1).Line.Split(' ')[-1]) -eq "SUCCESS") 
-        {
-            MAJ_Dell
-        }
-
-        Else 
-        {
-            Write-Host -ForegroundColor Yellow -Object "L'installation automatique de Dell Command Update a échoué."
-            Write-Host -ForegroundColor Yellow -Object "Le script va ouvrir l'installateur manuellement mais n'aurra pas consience de sa bonne installation."
-            Write-Host -ForegroundColor Yellow -Object "Veuillez entrez OK quand l'installation serra fini."
-            Pause
-            While ($DCUInstallOK -ne "OK") 
-            {          
-                Clear-Host
-                $DCUInstallOK = Read-Host -Prompt "Veuillez entrez OK quand l'installation de serra fini."   
-            }
-            MAJ_Dell
-        }
     }
-
-  	$host.UI.RawUI.WindowTitle = "Installation Poste - Etape 3 - MAJ Dell"
 
   	#Recherche et installe toutes les MAJ Dell disponible
   	Write-Host -ForegroundColor Yellow -Object "Recherche des MAJ Dell"
@@ -209,8 +202,15 @@ Function Install_Apps
   	#Attend que l'installation d'Office soit fini.
   	While (Get-Process OfficeSetup -ErrorAction SilentlyContinue)
   	{
-    	Write-Host -ForegroundColor Yellow -Object "L'instalation d'Office est toujours en cours."
-    	Start-Sleep -Seconds 5
+        $OfficeTestCountStr = "L'installation d'Office est en cours"
+
+        For ($CounterOff = 1 ; $CounterOff -le 3 ; $CounterOff++)
+        {    
+            Clear-Host
+            $OfficeTestCountStr = "$OfficeTestCountStr" + "."
+            Write-Host -ForegroundColor Yellow -Object $OfficeTestCountStr
+            Start-Sleep 1
+        }
   	}
 
 	#Installation Adobe.

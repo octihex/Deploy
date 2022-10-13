@@ -1,6 +1,6 @@
 If (!((New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))) 
 {
-    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
+    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -ExecutionPolicy Unrestricted -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
     Exit $LASTEXITCODE
 }
 
