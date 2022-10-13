@@ -29,7 +29,7 @@ Switch ((Get-Content -Path $DeployPath\Check-Install.txt)[-1])
 
     {$_ -eq "MAJWindowsOK"}
     {
-        #Start-Process -FilePath "$DeployPath\Scripts\E3_.ps1" -ArgumentList "-ExecutionPolicy Unrestricted" -NoNewWindow -Wait
+        Start-Process -FilePath "$DeployPath\Scripts\E3_MAJ-Dell.ps1" -ArgumentList "-ExecutionPolicy Unrestricted" -NoNewWindow -Wait
     }
 
     {$_ -eq "RenameOK"}

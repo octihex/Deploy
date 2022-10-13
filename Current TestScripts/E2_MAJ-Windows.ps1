@@ -1,11 +1,7 @@
-If (!((New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))) 
-{
-    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -ExecutionPolicy Unrestricted -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
-    Exit $LASTEXITCODE
-}
-
+#Change le nom de la fenêtre du script
 $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 2 - MAJs Windows"
 
+#Check si le module PSWindowsUpdate est installée
 If (!(Get-InstalledModule -Name PSWindowsUpdate -ErrorAction SilentlyContinue))
 {
     Write-Host -ForegroundColor Yellow -Object "Installation du module pour les MAJs Windows"
@@ -17,6 +13,7 @@ If (!(Get-InstalledModule -Name PSWindowsUpdate -ErrorAction SilentlyContinue))
     Restart-Computer
 }
 
+#Check si il y a des MAJ 
 If (!(Get-WindowsUpdate))
 {
     Write-Host "Plus de MAJs détecter, Vous pouvez fermé cette fenêtre." 
