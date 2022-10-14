@@ -20,13 +20,13 @@ While ($true)
     {
         {$ArrLaptops -eq $_} 
         { 
-            Write-Host "Ajout du poste au domaine dans l'OU Laptops avec le nom" -NoNewline; Write-Host -ForegroundColor Yellow -Object $NewNamePc
+            Write-Host "Ajout du poste au domaine dans l'OU Laptops avec le nom " -NoNewline; Write-Host -ForegroundColor Yellow -Object $NewNamePc
             Add-Computer -DomainName ceva.net -Force -NewName $NewNamePc -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
         }
     
         {$ArrDesktops -eq $_} 
         { 
-            Write-Host "Ajout du poste au domaine dans l'OU Desktops avec le nom" -NoNewline; Write-Host -ForegroundColor Yellow -Object $NewNamePc
+            Write-Host "Ajout du poste au domaine dans l'OU Desktops avec le nom " -NoNewline; Write-Host -ForegroundColor Yellow -Object $NewNamePc
             Add-Computer -DomainName ceva.net -Force -NewName $NewNamePc -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
         }
     
