@@ -1,10 +1,4 @@
-If (!((New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))) 
-{
-    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-noprofile -ExecutionPolicy Unrestricted -noexit -file "{0}" -elevated' -f ($myinvocation.MyCommand.Definition))
-    Exit $LASTEXITCODE
-}
-
-$host.UI.RawUI.WindowTitle = "Installation Poste - Etape 4 - Applications"
+$Host.UI.RawUI.WindowTitle = "Installation Poste - Etape 4 - Applications"
 
 $DeployPath = "C:\Deploy"
 
@@ -65,5 +59,4 @@ Set-Location $DeployPath\Optionnel
 
 Write-Host -ForegroundColor Yellow -Object "Fermeture d'Office."
 TASKKILL /F /IM OfficeC2RClient.exe
-Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject AppsOK | Out-Null
 Restart-Computer
