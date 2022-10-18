@@ -1,3 +1,9 @@
+If (!((New-Object Security.Principal.WindowsPrincipal $([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator))) 
+{
+    Start-Process Powershell.exe -Verb RunAs -ArgumentList ('-NoProfile -ExecutionPolicy Unrestricted -NoExit -File "{0}" -Elevated' -F ($Myinvocation.MyCommand.Definition))
+    Exit $LASTEXITCODE
+}
+
 $Optimizer = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "Dell Optimizer"}
 $OptimizerUI = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "DellOptimizerUI"}
 $Digital = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "Dell Digital Delivery Services"}
@@ -27,6 +33,15 @@ If ($Digital)
     Clear-Host
 }
 
+
+
+If (test-path -path "$OptimizerPath\DellOptimizer.exe" ) 
+{
+    Start-Process "$OptimizerPath\DellOptimizer.exe" -ArgumentList "-silent -remove -runfromtemp" -NoNewWindow -Wait
+    Clear-Host
+    Write-Host "Dell Optimizer Services a ete suprime"
+}
+
 If (!$Optimizer) 
 {
     Write-Host "Dell Optimizer is NOT installed."
@@ -40,12 +55,6 @@ If (!$Digital)
 If (!$OptimizerUI) 
 {
     Write-Host "Dell Optimizer UI is NOT installed."
-}
-
-if (test-path -path "$OptimizerPath\DellOptimizer.exe" ) 
-{
-    Start-Process "$OptimizerPath\DellOptimizer.exe" -ArgumentList "-silent -remove -runfromtemp"
-    Clear-Host
 }
 
 Pause
