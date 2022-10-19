@@ -1,5 +1,7 @@
 $Host.UI.RawUI.WindowTitle = "Installation Poste - Etape 3 - MAJ Dell"
 
+$DeployPath = "C:\Deploy"
+
 If (Test-Path -PathType leaf -Path "C:\Program Files (x86)\Dell\CommandUpdate\dcu-cli.exe")
 {
     $DCU_Path = "C:\Program Files (x86)\Dell\CommandUpdate"
@@ -31,7 +33,7 @@ If (!$DCU_Path)
 
     $ArrDCUCode = "SUCCESS", "REBOOT_REQUIRED"
 
-    If ($ArrDCUCode -ne ($Check_Install_DCU | Select-Object -First 1).Line.Split(' ')[-1]) 
+    If (!($ArrDCUCode -eq ($Check_Install_DCU | Select-Object -First 1).Line.Split(' ')[-1])) 
     {
         Write-Host -ForegroundColor Yellow -Object "L'installation automatique de Dell Command Update a échoué."
         Write-Host -ForegroundColor Yellow -Object "Le script va ouvrir l'installateur manuellement mais n'aurra pas consience de sa bonne installation."

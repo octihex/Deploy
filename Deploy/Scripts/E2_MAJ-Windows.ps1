@@ -1,5 +1,6 @@
 #Change le nom de la fenêtre du script
 $host.UI.RawUI.WindowTitle = "Installation Poste - Etape 2 - MAJs Windows"
+Clear-Host
 
 #Check si le module PSWindowsUpdate est installée
 If (!(Get-InstalledModule -Name PSWindowsUpdate -ErrorAction SilentlyContinue))

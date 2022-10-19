@@ -7,6 +7,8 @@ If (!((New-Object Security.Principal.WindowsPrincipal $([Security.Principal.Wind
     Exit $LASTEXITCODE
 }
 
+Set-Location "C:\Deploy"
+
 While ($True)
 {
     #Suivi d'étape de l'installation.
