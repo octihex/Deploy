@@ -4,7 +4,7 @@
     Exit $LASTEXITCODE
 }
 
-If (!(Test-Path -PathType leaf -Path "C:\Program Files\Dell\DellOptimizer\DO-cli.exe"))
+If (!(Test-Path -PathType Leaf -Path "C:\Program Files\Dell\DellOptimizer\Do-cli.exe"))
 {
     "La detection automatique de Dell Optimizer a echoue."
     "Le script va se ferme."
@@ -13,16 +13,16 @@ If (!(Test-Path -PathType leaf -Path "C:\Program Files\Dell\DellOptimizer\DO-cli
 }
 
 Set-Location "C:\Program Files\Dell\DellOptimizer"
-New-Item -ItemType "File" -Path ".\DO_Uninstall.log" -Force | Out-Null
+New-Item -ItemType "File" -Path "C:\Dell\Do_Uninstall.log" -Force | Out-Null
 
-If ((.\do-cli.exe /Get -Name=Network.State | Select-String -Pattern "Value:").Line.Split(" ")[-1] -eq "True") 
+If ((.\Do-cli.exe /Get -Name=Network.State | Select-String -Pattern "Value:").Line.Split(" ")[-1] -eq "True") 
 {
-    .\do-cli.exe /configure -name=Network.State -value=False | Out-Null
-    Out-File -FilePath ".\DO_Uninstall.log" -Append -Force -InputObject "L'option reseaux de Dell Optimizer viens d'etre desactiver." | Out-Null
+    .\Do-cli.exe /Configure -Name=Network.State -Value=False | Out-Null
+    Out-File -FilePath "C:\Dell\Do_Uninstall.log" -Append -Force -InputObject "L'option reseaux de Dell Optimizer viens d'etre desactiver." | Out-Null
 }
 
-If ((.\do-cli.exe /Get -Name=AppPerformance.State | Select-String -Pattern "Value:").Line.Split(" ")[-1] -eq "True") 
+If ((.\Do-cli.exe /Get -Name=AppPerformance.State | Select-String -Pattern "Value:").Line.Split(" ")[-1] -eq "True") 
 {
-    .\do-cli.exe /configure -name=AppPerformance.State -value=False | Out-Null
-    Out-File -FilePath ".\DO_Uninstall.log" -Append -Force -InputObject "L'option applications de Dell Optimizer viens d'etre desactiver." | Out-Null
+    .\Do-cli.exe /Configure -Name=AppPerformance.State -Value=False | Out-Null
+    Out-File -FilePath "C:\Dell\Do_Uninstall.log" -Append -Force -InputObject "L'option applications de Dell Optimizer viens d'etre desactiver." | Out-Null
 }
