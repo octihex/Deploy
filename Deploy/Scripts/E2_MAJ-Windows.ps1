@@ -10,16 +10,20 @@ If (!(Get-InstalledModule -Name PSWindowsUpdate -ErrorAction SilentlyContinue))
   	Install-Module -Name PSWindowsUpdate -Confirm:$False -Force | Out-Null
 }
 
+Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
+
 #Check si il y a des MAJ 
-If (!(Get-WindowsUpdate -NotKBArticleID KB2267602))
+If (Get-WindowsUpdate -NotKBArticleID KB2267602)
+{
+    #Install les MAJ si trouvé précédemment
+    Clear-Host
+    Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Windows"
+    Get-WindowsUpdate -Download -AcceptAll -Install -IgnoreReboot
+    Restart-Computer
+}
+
+Else 
 {
     Clear-Host
     Write-Host "Plus de MAJs détecter." 
-    Pause
 }
-
-#Install les MAJ si trouvé précédemment
-Clear-Host
-Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Windows"
-Get-WindowsUpdate -Download -AcceptAll -Install -IgnoreReboot
-Restart-Computer

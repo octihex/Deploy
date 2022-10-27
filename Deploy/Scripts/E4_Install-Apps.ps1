@@ -66,4 +66,5 @@ Set-Location $DeployPath\Apps\Optionnel
 Clear-Host
 Write-Host -ForegroundColor Yellow -Object "Fermeture d'Office."
 TASKKILL /F /IM OfficeC2RClient.exe
+Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject AppsOK | Out-Null
 Restart-Computer
