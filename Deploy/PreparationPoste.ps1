@@ -14,7 +14,7 @@ If (!((New-Object Security.Principal.WindowsPrincipal $([Security.Principal.Wind
 
     Out-File -FilePath $DeployPath\Get_USB_Path.txt -Force -InputObject (Get-Location).Path | Out-Null
 
-    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-NoProfile -ExecutionPolicy Bypass -NoExit -File "{0}" -Elevated' -f ($Myinvocation.MyCommand.Definition))
+    Start-Process powershell.exe -Verb RunAs -ArgumentList ('-NoProfile -ExecutionPolicy Bypass -NoExit -File "{0}" -Elevated' -f ($Myinvocation.MyCommand.Definition)) -WindowStyle Maximized
     Exit $LASTEXITCODE
 }
 

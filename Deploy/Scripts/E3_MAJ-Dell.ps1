@@ -55,12 +55,22 @@ Clear-Host
 Write-Host -ForegroundColor Yellow -Object "Recherche des MAJ Dell"
 
 #Configure Dell Command Update et cherche les MAJ disponible
-Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/configure -silent -autoSuspendBitLocker=enable -userConsent=disable" -NoNewWindow -Wait
-Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/scan" -NoNewWindow -Wait
+Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/configure -silent -autoSuspendBitLocker=enable -userConsent=disable" -NoNewWindow -Wait | Out-Null
+Clear-Host
+Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/scan -outputLog=C:\Dell\DCU_Scan.log" -NoNewWindow -Wait | Out-Null
+
+$DCU_Scan = (Select-String -Path "C:\Dell\DCU_Scan.log" -Pattern 'The program exited with return code:')
+
 Clear-Host
 
-#Installe toutes les MAJ
-Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Dell"
-Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/applyUpdates -reboot=disable" -NoNewWindow -Wait
-Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
-Restart-Computer
+If (!("500" -eq ($DCU_Scan | Select-Object -First 1).Line.Split(' ')[-2]))
+{
+    #Installe toutes les MAJ
+    Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Dell"
+    Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/applyUpdates -reboot=disable" -NoNewWindow -Wait
+    Restart-Computer   
+}
+
+Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
+Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
+Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted C:\Deploy\Scripts\E4_Install-Apps.ps1" -NoNewWindow

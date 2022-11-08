@@ -15,11 +15,12 @@ While ($True)
     Write-Host "Renommage et Integration au Domaine | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 1"
     Write-Host "Mise a jour Windows | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 2"
     Write-Host "Mise a jour Constructeur | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 3"
-    Write-Host "Installation des Applications | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 4"
-    Write-Host "Verification de L'installation | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 5"
-    Write-Host "Nettoyage des Fichiers sur le Poste | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 6"
+    #Write-Host "Installation des Applications | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 4"
+    #Write-Host "Verification de L'installation | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 5"
+    #Write-Host "Nettoyage des Fichiers sur le Poste | " -NoNewline; Write-Host -ForegroundColor Yellow "Etape 6"
     Switch (Read-Host -Prompt "Numero de l'etape ?") 
     {
+<#      
         6 
         {  
             Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E6_Cleaning.ps1" -NoNewWindow -Wait
@@ -34,7 +35,7 @@ While ($True)
         {
             Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E4_Install-Apps.ps1" -NoNewWindow -Wait
         }
-
+#>
         3
         {
             Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E3_MAJ-Dell.ps1" -NoNewWindow -Wait
@@ -52,9 +53,7 @@ While ($True)
 
         Default 
         {
-            Write-Host -ForegroundColor Yellow -Object "Erreur dans la detection de l'étape actuelle du script, fermeture."
-            Start-Sleep -Seconds 5
-  	        Exit
+            Write-Host -ForegroundColor Yellow -Object "Erreur dans la detection de l'étape actuelle du script."
         }
     }
 }

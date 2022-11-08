@@ -1,6 +1,9 @@
+
+$DeployPath = "C:\Deploy"
+
 #check si dans le domaine OK
 Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E1_Domain.ps1" -NoNewWindow -Wait
-
+<#
 #check si toutes maj Windows OK
 Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E2_MAJ-Windows.ps1" -NoNewWindow -Wait
 
@@ -9,17 +12,26 @@ Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPat
 
 #check si toutes apps OK
 #Faire listing des apps a l'installation
-
+#>
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+Clear-Host
 #Demande de changer le MDP du compte CEPRT
-net user CEPRT *
+<#
+While (!$CeprtPass)
+{
+    $CeprtPass = Read-Host "Enter the new password" -AsSecureString
+}
+
+Get-LocalUser -Name "CEPRT" | Set-LocalUser -Password $CeprtPass
+#>
+Net User Ceprt *
 #Désinstalle le module Powershell PSWindowsUpdate
 Uninstall-Module -Name PSWindowsUpdate -Force
 Remove-Item "C:\Program Files\PackageManagement\ProviderAssemblies\nuget" -Recurse -ErrorAction SilentlyContinue
 Remove-Item "C:\Users\ceprt\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Deploy.lnk" | Out-Null
 Set-ItemProperty -Path REGISTRY::HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Policies\System -Name ConsentPromptBehaviorAdmin -Value 5
 Set-ExecutionPolicy -ExecutionPolicy Restricted -Force
+Invoke-GPUpdate
 
 #Suprime les fichiers d'installation et redemarre le poste.
 shutdown -s -t 5

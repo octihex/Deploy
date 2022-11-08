@@ -23,14 +23,16 @@ If (!((Get-CimInstance -ClassName Win32_ComputerSystem).domain -eq "ceva.net"))
             {$ArrLaptops -eq $_} 
             { 
                 Write-Host "Ajout du poste au domaine dans l'OU Laptops avec le nom " -NoNewline; Write-Host -ForegroundColor Yellow -Object $NewNamePc
-                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+                Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+                Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
                 Add-Computer -DomainName ceva.net -Force -NewName $NewNamePc -OUPath "OU=Laptops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
             }
     
             {$ArrDesktops -eq $_} 
             { 
                 Write-Host "Ajout du poste au domaine dans l'OU Desktops avec le nom " -NoNewline; Write-Host -ForegroundColor Yellow -Object $NewNamePc
-                Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+                Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
+                Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject RenameOK | Out-Null
                 Add-Computer -DomainName ceva.net -Force -NewName $NewNamePc -OUPath "OU=Desktops,OU=Workstations,OU=Office,OU=Libourne,OU=_FR,DC=ceva,DC=net" -Restart
             }
     

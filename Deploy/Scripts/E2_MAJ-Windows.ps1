@@ -10,8 +10,6 @@ If (!(Get-InstalledModule -Name PSWindowsUpdate -ErrorAction SilentlyContinue))
   	Install-Module -Name PSWindowsUpdate -Confirm:$False -Force | Out-Null
 }
 
-Out-File -FilePath $DeployPath\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
-
 #Check si il y a des MAJ 
 If (Get-WindowsUpdate -NotKBArticleID KB2267602)
 {
@@ -25,5 +23,8 @@ If (Get-WindowsUpdate -NotKBArticleID KB2267602)
 Else 
 {
     Clear-Host
-    Write-Host "Plus de MAJs détecter." 
+    Write-Host "Plus de MAJs detecter." 
+    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
+    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
+    Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted C:\Deploy\Scripts\E3_MAJ-Dell.ps1" -NoNewWindow
 }
