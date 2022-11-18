@@ -1,6 +1,7 @@
 #Change le nom de la fenêtre du script
 $Host.UI.RawUI.WindowTitle = "Installation Poste - Etape 1 - Domaine"
 
+#Check si le poste est dans le domaine
 If (!((Get-CimInstance -ClassName Win32_ComputerSystem).domain -eq "ceva.net")) 
 {
     #Arrays pour les normes de nommage

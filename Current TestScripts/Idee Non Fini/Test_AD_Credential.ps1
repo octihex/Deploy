@@ -68,7 +68,7 @@ function Test-ADAuthentication {
         [Parameter(Mandatory)]
         [string]$User,
         [Parameter(Mandatory)]
-        $Password,
+        [pscredential]$Password,
         [Parameter(Mandatory = $false)]
         $Server,
         [Parameter(Mandatory = $false)]
@@ -98,5 +98,6 @@ function Test-ADAuthentication {
         Write-Warning "$Domain\$User - AD Authentication failed"
     }
 }
+
 #Test-ADAuthentication -User toto -Password passXX
 #Test-ADAuthentication -User toto -Password passXX -Server xxx.domain.com

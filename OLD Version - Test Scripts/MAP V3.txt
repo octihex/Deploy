@@ -1,0 +1,117 @@
+Copyright (C) Microsoft Corporation. Tous droits réservés.
+
+Testez le nouveau système multiplateforme PowerShell https://aka.ms/pscore6
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> k:
+Au caractère Ligne:1 : 1
++ Set-Location $MyInvocation.MyCommand.Name
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (K:String) [Set-Location], DriveNotFoundException
+    + FullyQualifiedErrorId : DriveNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> p:
+Set-Location : Lecteur introuvable. Il n'existe aucun lecteur nommé « P ».
+Au caractère Ligne:1 : 1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (P:String) [Set-Location], DriveNotFoundException
+    + FullyQualifiedErrorId : DriveNotFound,Microsoft.PowerShell.Commands.SetLocationCommand
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> New-PSDrive -Persist -Name "X" -PSProvider "FileSystem" -Root "\\fs11lib1fr\logiciels" -Scope Global
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+X                2750,84       2369,03 FileSystem    \\fs11lib1fr\logiciels
+
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> $cred = Get-Credential
+
+applet de commande Get-Credential à la position 1 du pipeline de la commande
+Fournissez des valeurs pour les paramètres suivants :
+Credential
+New-PSDrive : Plusieurs connexions à un serveur ou à une ressource partagée par le même utilisateur, en utilisant plus
+d’un nom utilisateur, ne sont pas autorisées. Supprimez toutes les connexions précédentes au serveur ou à la ressource
+partagée et recommencez
+Au caractère Ligne:1 : 1
++ New-PSDrive -Persist -Name "H" -PSProvider "FileSystem" -Root "\\fs11 ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidOperation : (H:PSDriveInfo) [New-PSDrive], Win32Exception
+    + FullyQualifiedErrorId : CouldNotMapNetworkDrive,Microsoft.PowerShell.Commands.NewPSDriveCommand
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> Get-PSDrive
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+Alias                                  Alias
+C                 168,67         67,04 FileSystem    C:\                                 ...\Deploy\Current TestScripts
+Cert                                   Certificate   \
+Env                                    Environment
+HKCU                                   Registry      HKEY_CURRENT_USER
+HKLM                                   Registry      HKEY_LOCAL_MACHINE
+M                  43,72         15,72 FileSystem    \\ceva.net\DFS_LIB1FR\Shared
+Variable                               Variable
+WSMan                                  WSMan
+X                2750,84       2369,03 FileSystem    \\fs11lib1fr\logiciels
+Y                   0,10          0,13 FileSystem    Y:\
+
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> Remove-PSDrive "X" -Force
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> Get-PSDrive
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+Alias                                  Alias
+C                 168,67         67,04 FileSystem    C:\                                 ...\Deploy\Current TestScripts
+Cert                                   Certificate   \
+Function                               Function
+HKCU                                   Registry      HKEY_CURRENT_USER
+HKLM                                   Registry      HKEY_LOCAL_MACHINE
+M                  43,72         15,72 FileSystem    \\ceva.net\DFS_LIB1FR\Shared
+Variable                               Variable
+WSMan                                  WSMan
+Y                   0,10          0,13 FileSystem    Y:\
+
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> New-PSDrive -Persist -Name "H" -PSProvider "FileSystem" -Root "\\fs11lib1fr\logiciels" -Scope Global -Credential $cred
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+H                2750,84       2369,03 FileSystem    \\fs11lib1fr\logiciels
+
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> Remove-PSDrive "H" -Force
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> ping fs11lib1fr
+Envoi d’une requête 'ping' sur fs11lib1fr.ceva.net [172.20.18.81] avec 32 octets de données :
+Délai d’attente de la demande dépassé.
+Délai d’attente de la demande dépassé.
+Délai d’attente de la demande dépassé.
+Délai d’attente de la demande dépassé.
+
+Statistiques Ping pour 172.20.18.81:
+    Paquets : envoyés = 4, reçus = 0, perdus = 4 (perte 100%),
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> Get-DnsClientServerAddress
+
+InterfaceAlias               Interface Address ServerAddresses
+                             Index     Family
+--------------               --------- ------- ---------------
+Ethernet 2                           8 IPv4    {10.10.151.10, 10.10.151.11}
+Ethernet 2                           8 IPv6    {}
+Connexion au réseau local* 1        19 IPv4    {}
+Connexion au réseau local* 1        19 IPv6    {fec0:0:0:ffff::1, fec0:0:0:ffff::2, fec0:0:0:ffff::3}
+Connexion au réseau local* 2         4 IPv4    {}
+Connexion au réseau local* 2         4 IPv6    {fec0:0:0:ffff::1, fec0:0:0:ffff::2, fec0:0:0:ffff::3}
+Wi-Fi                                3 IPv4    {10.10.151.10, 10.10.151.11}
+Wi-Fi                                3 IPv6    {}
+Connexion réseau Bluetooth          20 IPv4    {}
+Connexion réseau Bluetooth          20 IPv6    {fec0:0:0:ffff::1, fec0:0:0:ffff::2, fec0:0:0:ffff::3}
+Loopback Pseudo-Interface 1          1 IPv4    {}
+Loopback Pseudo-Interface 1          1 IPv6    {fec0:0:0:ffff::1, fec0:0:0:ffff::2, fec0:0:0:ffff::3}
+
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts> New-PSDrive -Persist -Name "H" -PSProvider "FileSystem" -Root "\\172.20.18.81\logiciels" -Scope Global -Credential $cred
+
+Name           Used (GB)     Free (GB) Provider      Root                                               CurrentLocation
+----           ---------     --------- --------      ----                                               ---------------
+H                2754,61       2365,26 FileSystem    \\172.20.18.81\logiciels
+
+
+PS C:\Users\schadour\OneDrive - CEVA SANTE ANIMALE\Bureau\Deploy\Current TestScripts>

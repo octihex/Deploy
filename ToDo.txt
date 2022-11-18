@@ -2,6 +2,10 @@
 - Detection Constructeur | OK
 - Detection install DCU est bonne | OK
 - Refaire fonctionnement de l'install | OK
-- Citrix pas autolaunch
-- Adobe silent | OK
-- Teams pas autolaunch
+
+- Adobe silent NOK
+-- Seulement avec le .Msi
+
+- MAP FS11 OK
+-- Get ip ** DNS
+--- 172.20.18.81
