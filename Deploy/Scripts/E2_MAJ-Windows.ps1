@@ -17,14 +17,7 @@ If (Get-WindowsUpdate -NotKBArticleID KB2267602)
     Clear-Host
     Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Windows"
     Get-WindowsUpdate -Download -AcceptAll -Install -IgnoreReboot
+    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
+    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
     Restart-Computer
-}
-
-Else 
-{
-    Clear-Host
-    Write-Host "Plus de MAJs detecter." 
-    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
-    Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
-    Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted C:\Deploy\Scripts\E3_MAJ-Dell.ps1" -NoNewWindow
 }

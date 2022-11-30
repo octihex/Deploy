@@ -69,8 +69,11 @@ While (Get-Process OfficeSetup -ErrorAction SilentlyContinue)
 #Configure les .PDF pour être ouvert avec Adobe
 Clear-Host
 Start-Sleep -Seconds 2
-Set-Location $DeployPath\Apps\Optionnel
+Set-Location $DeployPath\Scripts\Optionnel
 . .\SFTA.ps1; (Set-FTA AcroExch.Document.DC .pdf)
+
+#Désactive Dell Optimizer
+Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\Optionnel\Optimizer_Disable.ps1" -NoNewWindow
 
 Clear-Host
 Write-Host -ForegroundColor Yellow -Object "Fermeture d'Office."

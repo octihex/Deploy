@@ -1,29 +1,3 @@
-
-$DeployPath = "C:\Deploy"
-
-#check si dans le domaine OK
-Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E1_Domain.ps1" -NoNewWindow -Wait
-<#
-#check si toutes maj Windows OK
-Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E2_MAJ-Windows.ps1" -NoNewWindow -Wait
-
-#check si toutes maj Dell OK
-Start-Process Powershell -ArgumentList "-ExecutionPolicy Unrestricted $DeployPath\Scripts\E3_MAJ-Dell.ps1" -NoNewWindow -Wait
-
-#check si toutes apps OK
-#Faire listing des apps a l'installation
-#>
-#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Clear-Host
-#Demande de changer le MDP du compte CEPRT
-<#
-While (!$CeprtPass)
-{
-    $CeprtPass = Read-Host "Enter the new password" -AsSecureString
-}
-
-Get-LocalUser -Name "CEPRT" | Set-LocalUser -Password $CeprtPass
-#>
 Net User Ceprt *
 #Désinstalle le module Powershell PSWindowsUpdate
 Uninstall-Module -Name PSWindowsUpdate -Force

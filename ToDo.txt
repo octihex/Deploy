@@ -7,5 +7,5 @@
 -- Seulement avec le .Msi
 
 - MAP FS11 OK
--- Get ip ** DNS
+-- Get ip 
 --- 172.20.18.81
