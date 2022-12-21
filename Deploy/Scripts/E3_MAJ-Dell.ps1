@@ -65,4 +65,4 @@ Write-Host -ForegroundColor Yellow -Object "Installation des MAJ Dell"
 Start-Process -FilePath "$DCU_Path\dcu-cli.exe" -ArgumentList "/applyUpdates -reboot=disable" -NoNewWindow -Wait
 Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
 Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJConstructeursOK | Out-Null
-Restart-Computer
+Restart-Computer -Force

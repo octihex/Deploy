@@ -16,5 +16,5 @@ Rename-Computer -NewName 'nompc'
 
 #####################################################################
 
-Restart-Computer
+Restart-Computer -Force
 

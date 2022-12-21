@@ -8,6 +8,13 @@ Write-Host -ForegroundColor Yellow -Object "Installation d'Adobe"
 Start-Process -FilePath "$DeployPath\Apps\Adobe.exe" -ArgumentList "/sAll /rs /msi EULA_ACCEPT=YES" -WindowStyle Hidden
 Clear-Host
 
+#Desinstalation d'Office.
+Start-Sleep -Seconds 2
+Write-Host -ForegroundColor Yellow -Object "Desinstalation d'Office generique"
+Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe" -ArgumentList "$DeployPath\Apps\Office\Office365.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
+Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe" -ArgumentList "$DeployPath\Apps\Office\Office15.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
+Clear-Host
+
 #Installation Office.
 Start-Sleep -Seconds 2
 TASKKILL /F /IM OfficeSetup.exe | Out-Null
@@ -31,13 +38,6 @@ Write-Host -ForegroundColor Yellow -Object "Installation de Citrix"
 Start-Process -FilePath "$DeployPath\Apps\Citrix.exe" -ArgumentList "/noreboot /silent /AutoUpdateCheck=Disabled EnableCEIP=false EnableTracing=false" -NoNewWindow
 Clear-Host
 
-#Desinstalation d'Office.
-Start-Sleep -Seconds 2
-Write-Host -ForegroundColor Yellow -Object "Desinstalation d'Office generique"
-Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe" -ArgumentList "$DeployPath\Apps\Office\Office365.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
-Start-Process -FilePath "C:\Windows\SysWOW64\Cscript.exe" -ArgumentList "$DeployPath\Apps\Office\Office15.vbs ALL /Quiet /NoCancel /Force /OSE" -NoNewWindow -Wait
-Clear-Host
-
 #Installation Teams.
 Start-Sleep -Seconds 2
 Write-Host -ForegroundColor Yellow -Object "Installation de Teams"
@@ -53,7 +53,7 @@ Clear-Host
 #Installation Chrome.
 Start-Sleep -Seconds 2
 Write-Host -ForegroundColor Yellow -Object "Installation de Chrome"
-Start-Process -FilePath "$DeployPath\Apps\Chrome.exe" -ArgumentList "/silent /install" -NoNewWindow -Wait -WindowStyle Minimized
+Start-Process -FilePath "$DeployPath\Apps\Chrome.exe" -ArgumentList "/silent /install" -Wait -WindowStyle Minimized
 
 #Ajoute TeamViewerQS et le shortcut Teams.
 Copy-Item -Path "$DeployPath\Apps\Public\*" -Destination "C:\Users\Public\Desktop" -Recurse
@@ -81,4 +81,4 @@ TASKKILL /F /IM OfficeC2RClient.exe
 
 Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject AppsOK | Out-Null
 Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject AppsOK | Out-Null
-Restart-Computer
+Restart-Computer -Force

@@ -1,0 +1,5 @@
+Section,Method,Command,Arguments,Name,Description
+,powershell_file,.\example_target.ps1,,Test Script:,.ps1 file called with powershell.exe
+,powershell_file,.\example_target.ps1,,Test Script:,.ps1 file called with powershell.exe
+,powershell_file,.\example_target.ps1,,Test Script:,.ps1 file called with powershell.exe
+,powershell_file,.\example_target.ps1,,Test Script:,Powershell_File

@@ -19,5 +19,5 @@ If (Get-WindowsUpdate -NotKBArticleID KB2267602)
     Get-WindowsUpdate -Download -AcceptAll -Install -IgnoreReboot
     Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
     Out-File -FilePath C:\Deploy\Check-Install.txt -Append -Force -InputObject MAJWindowsOK | Out-Null
-    Restart-Computer
+    Restart-Computer -Force
 }
